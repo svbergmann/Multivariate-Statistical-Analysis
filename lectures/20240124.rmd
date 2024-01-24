@@ -1,0 +1,17 @@
+---
+title: "MthStat 768"
+date: January 24, 2024
+output: pdf_document
+---
+
+```{r}
+A <- matrix(c(1, 0, 0, 1, 1, 0), 3, 2)
+qrout <- qr(A)
+Q <- qr.Q(qrout)
+R <- qr.R(qrout)
+t(Q) %*% Q
+```
+```{r}
+A <- matrix(c(1, 0, 0, 1, 1, 0, 1, -1, 0), 3, 3)
+
+```
