@@ -3,5 +3,18 @@
   <component name="Black">
     <option name="sdkName" value="C:\Users\sberg\anaconda3" />
   </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="C:\Users\sberg\anaconda3" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.12 (Multivariate Statistical Analysis)" project-jdk-type="Python SDK" />
+  <component name="RMarkdownSettings">
+    <option name="renderProfiles">
+      <map>
+        <entry key="file://$PROJECT_DIR$/lectures/20240124.rmd">
+          <value>
+            <RMarkdownRenderProfile>
+              <option name="outputDirectoryUrl" value="file://$PROJECT_DIR$/lectures" />
+            </RMarkdownRenderProfile>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
 </project>
