@@ -1,0 +1,39 @@
+---
+title: "MthStat 768"
+date: January 31, 2024
+output: pdf_document
+---
+
+```{r}
+A <- matrix(c(1, -1, -1, -2), 2, 2)
+eigen(A)
+```
+```{r}
+L <- diag(eigen(A)$values)
+V <- eigen(A)$vectors
+t(V) %*% L %*% V
+```
+```{r}
+lmd <- eigen(A)$values
+L1 <- diag(1 / lmd)
+A1 <- t(V) %*% L1 %*% V
+A1
+```
+```{r}
+A1 %*% A
+```
+```{r}
+solve(A)
+```
+```{r}
+A <- matrix(c(1, -1, -1, 2), 2, 2)
+L <- diag(eigen(A)$values)
+V <- eigen(A)$vectors
+L_sq <- sqrt(L)
+B <- V %*% L_sq %*% t(V)
+B %*% B
+```
+```{r}
+R <- chol(A)
+t(R) %*% R
+```

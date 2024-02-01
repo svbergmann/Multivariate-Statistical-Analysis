@@ -1,0 +1,50 @@
+---
+title: "MthStat 768"
+date: January 28, 2024
+output: pdf_document
+---
+
+```{r}
+A <- matrix(c(1, 1, 0, 1, 1, 1), 3, 2)
+print(A)
+```
+```{r}
+AtA <- t(A) %*% A
+print(AtA)
+```
+```{r}
+invA <- solve(t(A) %*% A)
+print(invA)
+```
+```{r}
+P <- A %*% solve(t(A) %*% A) %*% t(A)
+print(P)
+```
+```{r}
+tP <- t(P)
+print(tP)
+```
+```{r}
+idemP <- P %*% P
+print(idemP)
+```
+```{r}
+A <- matrix(c(1, -1, -1, 1), 2, 2)
+eigen(A)
+```
+```{r}
+out <- eigen(A)
+lmb <- out$values
+print(lmb)
+```
+```{r}
+Lambda <- diag(lmb)
+print(Lambda)
+```
+```{r}
+V <- out$vectors
+print(V)
+```
+```{r}
+t(V) %*% V
+```

@@ -10,6 +10,21 @@
         <entry key="file://$PROJECT_DIR$/lectures/20240124.rmd">
           <value>
             <RMarkdownRenderProfile>
+              <option name="lastOutput" value="$PROJECT_DIR$/lectures/20240124.pdf" />
+              <option name="outputDirectoryUrl" value="file://$PROJECT_DIR$/lectures" />
+            </RMarkdownRenderProfile>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/lectures/20240129.rmd">
+          <value>
+            <RMarkdownRenderProfile>
+              <option name="outputDirectoryUrl" value="file://$PROJECT_DIR$/lectures" />
+            </RMarkdownRenderProfile>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/lectures/20240131.rmd">
+          <value>
+            <RMarkdownRenderProfile>
               <option name="outputDirectoryUrl" value="file://$PROJECT_DIR$/lectures" />
             </RMarkdownRenderProfile>
           </value>
