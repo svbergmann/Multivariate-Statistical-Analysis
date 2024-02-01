@@ -1,9 +1,10 @@
 ---
 title: "Multivariate Statistical Analysis"
 author: Lucas Fellmeth, Helen Kafka, Sven Bergmann
-date: 02.07.24
+date: 02/07/24
 output: pdf_document
 ---
+
 # Exercise 1
 ## Problem
 Determine which of the following matrices admit a matrix square root, and for the ones that do, find it.
@@ -23,7 +24,7 @@ Because one of the eigenvalues is negative, more precisely -2, according to the 
 
 ### (i)
 ```{r}
-A2 <- matrix(c(3, 2, 1 - 1, 2, 3, 1, -1, 1, 2), 3, 3)
+A2 <- matrix(c(3, 2, - 1, 2, 3, 1, -1, 1, 2), 3, 3)
 A2
 ```
 Check if the eigenvalues of A2 are positive:
@@ -43,7 +44,7 @@ B %*% B
 ```
 # Exercise 2
 ## Problem
-Let H be the subspace of $\mathbb{R}^3$ with basis v1 and v2 given by
+Let $H$ be the subspace of $\mathbb{R}^3$ with basis $v_1$ and $v_2$ given by
 ```{r}
 v1 <- c(1, 1, 1)
 v2 <- c(1, -1, 0)
@@ -60,31 +61,38 @@ A_i <- solve(A_t %*% A)
 P <- A %*% A_i %*% A_t
 P
 ```
+### b)
+
 ### i)
 
 ```{r}
 x1 <- c(0, 1, 1)
 x1_best <- P %*% x1
 x1_best
-norm1 <- t(x1_best) %*% x1_best
 ```
 
 
 ### ii)
 ```{r}
 x2 <- c(2, 0, 1)
-x2_best <- P %*% x1
+x2_best <- P %*% x2
 x2_best
-norm2 <- t(x2_best) %*% x2_best
+x2 %*% A
 ```
+
+The result tells us $x_2$ is part of the subspace. We can confirm this because $x_2$ is a linear combination of $v_1$ and $v_2$.
+
 
 ### iii)
 ```{r}
 x3 <- c(-1, -1, 2)
-x3_best <- P %*% x1
+x3_best <- P %*% x3
 x3_best
-norm3 <- t(x3_best) %*% x3_best
+v1 %*% x3
+v2 %*% x3
 ```
+
+The result tells us, $x_3$ is perpendicular to $v_1$ and $v_2$.
 
 # Exercise 3
 ## Problem
@@ -93,7 +101,7 @@ Consider the matrix
 B <- matrix(c(2 / 3, 1 / 3, 1 / 3, 1 / 3, 2 / 3, -1 / 3, 1 / 3, -1 / 3, 2 / 3), 3, 3)
 B
 ```
-Is B a projection matrix for some space H? If so, find a basis for H.
+Is $B$ a projection matrix for some space $H$? If so, find a basis for $H$.
 
 According to lecture, such that a matrix is a projection matrix it has to be symmetric and idempotent.
 ```{r}
@@ -101,9 +109,9 @@ B
 t(B)
 B %*% B
 ```
-Because the matrices are the same, B is symmetric and idempotent. Hence, B is a projection matrix.
+Because the matrices are the same, $B$ is symmetric and idempotent. Hence, $B$ is a projection matrix.
 
-To find a basis for H, we have to find the eigenvectors:
+To find a basis for $H$, we have to find the eigenvectors:
 ```{r}
 eigen(B)$vector
 ```
