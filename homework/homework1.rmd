@@ -1,0 +1,148 @@
+---
+title: "Multivariate Statistical Analysis"
+author: Lucas Fellmeth, Helen Kafka, Sven Bergmann
+date: 02/07/24
+output: pdf_document
+---
+
+# Exercise 1
+## Problem
+Determine which of the following matrices admit a matrix square root, and for the ones that do, find it.
+
+### (i)
+
+```{r}
+A_1 <- matrix(c(2, 3, -1, 3, 2, 1, -1, 1, 0), 3, 3)
+print(A_1)
+```
+
+Check if the eigenvalues of $A_1$ are positive:
+
+```{r}
+e_1 <- eigen(A_1)$values
+print(e_1)
+```
+
+Because one of the eigenvalues is negative, more precisely -2, according to the lecture it does not exist a square root matrix for $A_1$.
+
+### (i)
+```{r}
+A_2 <- matrix(c(3, 2, -1, 2, 3, 1, -1, 1, 2), 3, 3)
+print(A_2)
+```
+
+Check if the eigenvalues of $A_2$ are positive:
+
+```{r}
+e_2 <- eigen(A_2)$values
+print(e_2)
+```
+
+Because the eigenvalues of $A_2$ are positive and the matrix is symmetric, $A_2$ is positive definite, and it has a matrix square root given by the following matrix:
+
+```{r}
+L <- diag(eigen(A_2)$values)
+V <- eigen(A_2)$vectors
+L_sq <- sqrt(L)
+B <- V %*% L_sq %*% solve(V)
+print(B)
+```
+
+We can verify this by Multiplication:
+
+```{r}
+print(B %*% B)
+```
+
+# Exercise 2
+## Problem
+Let $H$ be the subspace of $\mathbb{R}^3$ with basis $v_1$ and $v_2$ given by
+
+```{r}
+v_1 <- c(1, 1, 1)
+print(v_1)
+```
+```{r}
+v_2 <- c(1, -1, 0)
+print(v_2)
+```
+
+### a)
+Find the projection matrix $P$ associated with $\mathcal{H}$:
+
+```{r}
+A <- matrix(c(v_1, v_2), 3, 2)
+print(A)
+```
+```{r}
+A_t <- t(A)
+A_i <- solve(A_t %*% A)
+P <- A %*% A_i %*% A_t
+print(P)
+```
+### b)
+
+### i)
+
+```{r}
+x1 <- c(0, 1, 1)
+x1_best <- P %*% x1
+print(x1_best)
+```
+
+
+### ii)
+```{r}
+x2 <- c(2, 0, 1)
+x2_best <- P %*% x2
+print(x2_best)
+```
+```{r}
+print(x2 %*% A)
+```
+
+The result tells us, that $x_2$ is part of the subspace.
+We can confirm this because $x_2$ is a linear combination of $v_1$ and $v_2$.
+
+
+### iii)
+```{r}
+x3 <- c(-1, -1, 2)
+x3_best <- P %*% x3
+print(x3_best)
+
+```
+```{r}
+print(v_1 %*% x3)
+print(v_2 %*% x3)
+```
+
+The result tells us, $x_3$ is perpendicular to $v_1$ and $v_2$.
+
+# Exercise 3
+## Problem
+Consider the matrix
+
+```{r}
+B <- matrix(c(2 / 3, 1 / 3, 1 / 3, 1 / 3, 2 / 3, -1 / 3, 1 / 3, -1 / 3, 2 / 3), 3, 3)
+print(B)
+```
+
+Is $B$ a projection matrix for some space $\mathcal{H}$?
+If so, find a basis for $\mathcal{H}$.
+
+According to lecture, such that a matrix is a projection matrix it has to be symmetric and idempotent.
+
+```{r}
+print(B)
+print(t(B))
+print(B %*% B)
+```
+
+Because the matrices are the same, $B$ is symmetric and idempotent.
+Hence, $B$ is a projection matrix.
+
+To find a basis for $\mathcal{H}$, we have to find the eigenvectors:
+```{r}
+eigen(B)$vector
+```
