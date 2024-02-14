@@ -1,0 +1,97 @@
+---
+title: "MthStat 768"
+date: February 14, 2024
+output: pdf_document
+---
+
+# Chapter 7: Principal Component Analysis
+
+## Example: Food Data
+
+Import csv files: `read.csv(..)`.
+This creates a dataframe with variable names read from the file.
+There are $n=961$ observations, and $r=8$ variables for each observation.
+We have a sample $\overrightarrow{x_1}, \ldots, \overrightarrow{x_n} \in \mathbb{R}^r$.
+
+`View(..)` shows the dataframe.
+
+
+```{r}
+food <- read.csv(file = '../Data_csv/food.csv') # two points for knitting, one point for running it in the cell
+#View(food)
+```
+```{r}
+food_type <- food$food_type
+food <- food[, -1] # delete first column
+```
+
+We want to divide each column of the dataframe by the column `weight_grams`.
+In R we use `sweep(..)`.
+
+```{r}
+food2 <- sweep(x = food, MARGIN = 1, STATS = food$weight_grams, FUN = "/")
+#View(food2)
+```
+```{r}
+food2 <- food2[, -6]
+#View(food2)
+```
+
+We are left with $r=6$ numerical variables.
+
+$$\overline{x} = \frac{1}{n} \sum_{i=1}^n \overrightarrow{x_i}$$
+
+```{r}
+xbar <- apply(X = food2, MARGIN = 2, FUN = mean) # apply the mean on the columns
+```
+
+Population covariance matrix:
+
+$$
+\Sigma
+= \mathbb{E}\{(\overrightarrow{X} - \overrightarrow{\mu}) - (\overrightarrow{X} - \overrightarrow{\mu})^T\}
+$$
+
+Sample covariance matrix:
+
+$$
+\Sigma
+= \frac{1}{n} \sum_{i=1}^n (\overrightarrow{X_i} - \overline{X}) - (\overrightarrow{X_i} - \overline{X})^T
+$$
+
+```{r}
+S <- cov(food2)
+print(S)
+```
+
+$$
+\rho_{ij}
+= \frac{\text{Cov}(X_i, X_j)}{\sqrt{\text{Var}(X_i)\text{Var}(X_j)}}
+= \frac{S_{ij}}{\sqrt{S_{ii}S_{jj}}}
+$$
+
+Let $\Delta = \text{diag}(S)$.
+Then the sample correlation matrix is
+
+$$R = \Delta^{-1/2} S \Delta^{-1/2}$$
+
+In R we just use `cor(..)`.
+
+```{r}
+R <- cor(food2)
+print(R)
+```
+
+## Dimension Reduction
+
+Our sample $\{\overrightarrow{X_1}, \ldots, \overrightarrow{X_n}\}$ is a cloud of points in $\mathbb{R}^r$.
+We are going to try to find a subspace $\mathcal{H}$ of $\dim(\mathcal{H}) = q < r$ that approximates the data.
+The dispersion in the orthogonal directions to $\mathcal{H}$ are as small as possible.
+In mathematical terms:
+If $P$ is a projection matrix onto some subspace $\mathcal{H}$, we want to find $P$ that minimizes
+$$
+D = \sum_{i=1}^n \left|\left|
+\underbrace{(\overrightarrow{X_i} - \overline{X})}_{=\tilde{X_i}} - P(\overrightarrow{X_i} - \bar{X})
+\right|\right|^2
+$$
+Using the norm, we can rewrite $D$ in terms of the trace.

@@ -1,8 +1,0 @@
----
-title: "MthStat 768"
-date: February 7, 2024
-output: pdf_document
----
-
-```{r}
-```
