@@ -13,8 +13,39 @@ opts_chunk$set(tidy.opts = list(width.cutoff = 80), tidy = TRUE)
 ```{r, warning = F, message = F}
 library(expm)
 ```
+
 # Problem 1
+
 ## (a)
+
+We have $x\in\mathbb{R}^p$, $\mathbb{E}[x] = \mu$, $\text{Cov}(x) = \Sigma$, $A$ is a $p \times p$ constant matrix and $\text{tr}(A v v^\top) = v^\top A v$.
+Because $A$ is a constant $p \times p$ matrix, $A$ is symmetric.
+Because of this symmetry, it follows that it has a Cholesky decomposition as $A = C^\top C$.
+
+Let $y = C x$.
+
+Then
+
+\begin{align*}
+    \mathbb{E}[x^\top A x]
+    &= \mathbb{E}[x^\top C^\top C x] \\
+    &= \mathbb{E}[(Cx)^\top C x] \\
+    &= \mathbb{E}[y^\top y] \\
+    &= \sum_i \mathbb{E}[y_i^2] \\
+    &= \sum_i \text{Var}(y_i) + \mathbb{E}[y_i]^2 \\
+    &= \text{tr}(\Sigma_y) + \mu_y^\top \mu_y
+\end{align*}
+
+where $\Sigma_y = \mathbb{E}[(y-\mathbb{E}[y])(y-\mathbb{E}[y])^\top) = C \Sigma C^\top$
+and $\mu_y = C_\mu$.
+
+\begin{align*}
+    \implies \mathbb{E}[x^\top A x]
+    &= \text{tr}(C \Sigma C^\top) + \mu^\top \underbrace{C^\top C}_{=A} \mu \\
+    &= \text{tr}(\Sigma C^\top C) + \mu^\top A \mu \\
+    &= \text{tr}(\Sigma A) + \mu^\top A \mu
+\end{align*}
+
 ## (b)
 ## (c)
 
