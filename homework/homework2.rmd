@@ -1,0 +1,33 @@
+---
+title: "Multivariate Statistical Analysis"
+subtitle: "Homework 2"
+author: Lucas Fellmeth, Helen Kafka, Sven Bergmann
+date: 02/15/24
+output: pdf_document
+---
+
+```{r, echo = F}
+library(knitr)
+opts_chunk$set(tidy.opts = list(width.cutoff = 80), tidy = TRUE)
+```
+```{r, warning = F, message = F}
+library(expm)
+```
+# Problem 1
+## (a)
+## (b)
+## (c)
+
+# Problem 2
+## (a)
+## (b)
+```{r}
+Sigma <- matrix(data = c(1, -2, 0, -2, 5, 0, 0, 0, 2), nrow = 3, ncol = 3)
+print(Sigma)
+```
+```{r}
+Sigma_sqrt <- sqrtm(Sigma)
+print(Sigma_sqrt)
+```
+
+# Problem 3
