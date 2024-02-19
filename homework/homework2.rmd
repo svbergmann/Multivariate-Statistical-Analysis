@@ -200,15 +200,19 @@ Check if the matrix square root times the matrix square root equals A:
 ```{r}
 print(Sigma_sqrt %*% Sigma_sqrt)
 ```
+```{r}
+Sigma_sqrt_inv <- solve(Sigma_sqrt)
+print(Sigma_sqrt_inv)
+```
 
 So it follows:
 
 \begin{align*}
 Z =
 \begin{pmatrix}
-0.7071068 \cdot x_1 + (-0.7071068) \cdot x_2 \\
-(-0.7071068) \cdot x_1 + 2.1213203 \cdot x_2 \\
-1.414214 \cdot x_3 \\
+2.1213203  \cdot x_1 + 0.7071068 \cdot x_2 \\
+0.7071068  \cdot x_1 + 0.7071068 \cdot x_2 \\
+0.7071068  \cdot x_3 \\
 \end{pmatrix}
 \end{align*}
 
