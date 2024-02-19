@@ -1,0 +1,54 @@
+---
+title: "MthStat 768"
+date: February 19, 2024
+output: pdf_document
+---
+
+# Chapter 7: Principal Component Analysis
+```{r}
+food <- read.csv(file = '../Data_csv/food.csv') # two points for knitting, one point for running it in the cell
+food_names <- food$food_type
+food <- food[, -1]
+food2 <- sweep(x = food, MARGIN = 1, STATS = food$weight_grams, FUN = "/")
+food2 <- food2[, -6]
+```
+```{r}
+apply(X = food2, MARGIN = 2, FUN = sd)
+```
+```{r}
+food3 <- scale(food2)
+```
+```{r}
+S <- cov(food3)
+sum(diag(S))
+```
+```{r}
+eig <- eigen(S)
+eig$values
+```
+```{r}
+cumsum(eig$values)
+```
+```{r}
+cumsum(eig$values) / sum(eig$values)
+```
+
+First 3 account for 84% of the total variability.
+
+Then $\mathcal{H}$ is the space spanned by the first 3 eigenvectors:
+```{r}
+eig$vectors[, 1:3]
+```
+```{r}
+plot(1:6, eig$values)
+```
+```{r}
+xi <- food3 %*% eig$vectors[, 1:3]
+hist(xi[,1])
+```
+```{r}
+food_names[which(xi[,1] <= -6)]
+```
+```{r}
+food_names[which(xi[, 1]>=1.5)]
+```
