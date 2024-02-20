@@ -22,6 +22,14 @@
             </RMarkdownRenderProfile>
           </value>
         </entry>
+        <entry key="file://$PROJECT_DIR$/homework/homework2.rmd">
+          <value>
+            <RMarkdownRenderProfile>
+              <option name="lastOutput" value="$PROJECT_DIR$/homework/homework2.pdf" />
+              <option name="outputDirectoryUrl" value="file://$PROJECT_DIR$/homework" />
+            </RMarkdownRenderProfile>
+          </value>
+        </entry>
         <entry key="file://$PROJECT_DIR$/homework1.rmd">
           <value>
             <RMarkdownRenderProfile>
@@ -62,6 +70,14 @@
           <value>
             <RMarkdownRenderProfile>
               <option name="lastOutput" value="$PROJECT_DIR$/lectures/20240214.pdf" />
+              <option name="outputDirectoryUrl" value="file://$PROJECT_DIR$/lectures" />
+            </RMarkdownRenderProfile>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/lectures/20240219.rmd">
+          <value>
+            <RMarkdownRenderProfile>
+              <option name="lastOutput" value="$PROJECT_DIR$/lectures/20240219.pdf" />
               <option name="outputDirectoryUrl" value="file://$PROJECT_DIR$/lectures" />
             </RMarkdownRenderProfile>
           </value>

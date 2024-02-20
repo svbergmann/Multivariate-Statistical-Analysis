@@ -1,0 +1,276 @@
+---
+title: "Multivariate Statistical Analysis"
+subtitle: "Homework 2"
+author: Lucas Fellmeth, Helen Kafka, Sven Bergmann
+date: 02/15/24
+output: pdf_document
+---
+
+```{r, echo = F}
+library(knitr)
+opts_chunk$set(tidy.opts = list(width.cutoff = 80), tidy = TRUE)
+```
+
+# Problem 1
+
+## (a)
+
+We have $X\in\mathbb{R}^p$, $\mathbb{E}[X] = \mu$, $\text{Cov}(X) = \Sigma$, $A$ is a $p \times p$ constant matrix and $\text{tr}(A v v^\top) = v^\top A v$.
+Because $A$ is a constant $p \times p$ matrix, $A$ is symmetric.
+Because of this symmetry, it follows that it has a Cholesky decomposition as $A = C^\top C$.
+
+Let $y = C X$.
+
+Then
+
+\begin{align*}
+\mathbb{E}[X^\top A X]
+&= \mathbb{E}[X^\top C^\top C X] \\
+&= \mathbb{E}[(CX)^\top C X] \\
+&= \mathbb{E}[y^\top y] \\
+&= \sum_i \mathbb{E}[y_i^2] \\
+&= \sum_i \text{Var}(y_i) + \mathbb{E}[y_i]^2 \\
+&= \text{tr}(\Sigma_y) + \mu_y^\top \mu_y
+\end{align*}
+
+where $\Sigma_y = \mathbb{E}[(y-\mathbb{E}[y])(y-\mathbb{E}[y])^\top] = C \Sigma C^\top$
+and $\mu_y = C \cdot \mu$.
+
+\begin{align*}
+\implies \mathbb{E}[X^\top A X]
+&= \text{tr}(C \Sigma C^\top) + \mu^\top \underbrace{C^\top C}_{=A} \mu \\
+&= \text{tr}(\Sigma C^\top C) + \mu^\top A \mu \\
+&= \text{tr}(\Sigma A) + \mu^\top A \mu
+\end{align*}
+
+## (b)
+
+$X_1, \ldots, X_n$ uncorrelated:
+
+$\text{Cov}(X_i, X_j) = 0$ for $i\neq j$ and $\text{Cov}(X_i, X_i) = \text{Var}(X_i) = \sigma^2$
+
+\begin{align*}
+\implies \Sigma =
+\begin{pmatrix}
+\sigma^2    & 0         & 0         & \ldots    & 0         \\
+0           & \sigma^2  & 0         & \ldots    & 0         \\
+0           & 0         & \ddots    & \ldots    & \vdots    \\
+\vdots      & \vdots    & \ldots    & \ddots    & \vdots    \\
+0           & 0         & \ldots    & \ldots    & \sigma^2
+\end{pmatrix},
+J =
+\begin{pmatrix}
+1       & \ldots & 1        \\
+\vdots  & \ddots & \vdots   \\
+1       & \ldots & 1
+\end{pmatrix}
+\in \mathbb{R}^{p\times p}.
+\end{align*}
+
+\begin{align*}
+A = I - \frac{1}{p} J &=
+\begin{pmatrix}
+1 - \frac{1}{p} & - \frac{1}{p}     & - \frac{1}{p} & \ldots & - \frac{1}{p}    \\
+-\frac{1}{p}    & 1 - \frac{1}{p}   & - \frac{1}{p} & \ldots & - \frac{1}{p}    \\
+-\frac{1}{p}    & - \frac{1}{p}     & \ddots        & \ldots & \vdots           \\
+\vdots          & \vdots            & \ldots        & \ddots & \vdots           \\
+-\frac{1}{p}    & - \frac{1}{p}     & \ldots        & \ldots & 1 - \frac{1}{p}
+\end{pmatrix}
+\in \mathbb{R}^{p\times p}, \\
+A\Sigma &=
+\begin{pmatrix}
+(1 - \frac{1}{p}) \sigma^2  & - \frac{\sigma^2}{p}          & - \frac{\sigma^2}{p}  & \ldots & - \frac{\sigma^2}{p}     \\
+-\frac{\sigma^2}{p}         & (1 - \frac{1}{p}) \sigma^2    & - \frac{1}{p}         & \ldots & - \frac{1}{p}            \\
+-\frac{\sigma^2}{p}         & - \frac{\sigma^2}{p}          & \ddots                & \ldots & \vdots                   \\
+\vdots                      & \vdots                        & \ldots                & \ddots & \vdots                   \\
+-\frac{\sigma^2}{p}         & - \frac{\sigma^2}{p}          & \ldots                & \ldots & (1 - \frac{1}{p}) \sigma^2
+\end{pmatrix}
+\in \mathbb{R}^{p\times p}.
+\end{align*}
+
+\begin{align*}
+\mathbb{E}[X^\top A X]
+&\overset{a)}{=} \text{tr}(A\Sigma) + \mu^\top A \mu \\
+&= \sum_{i=1}^p (1-\frac{1}{p}) \sigma^2 + (\mu \ldots \mu)^\top
+\begin{pmatrix}
+1 - \frac{1}{p} & - \frac{1}{p}     & - \frac{1}{p} & \ldots & - \frac{1}{p}    \\
+-\frac{1}{p}    & 1 - \frac{1}{p}   & - \frac{1}{p} & \ldots & - \frac{1}{p}    \\
+-\frac{1}{p}    & - \frac{1}{p}     & \ddots        & \ldots & \vdots           \\
+\vdots          & \vdots            & \ldots        & \ddots & \vdots           \\
+-\frac{1}{p}    & - \frac{1}{p}     & \ldots        & \ldots & 1 - \frac{1}{p}
+\end{pmatrix}
+\begin{pmatrix}
+\mu \\
+\vdots \\
+\mu
+\end{pmatrix} \\
+&= p \cdot (1-\frac{1}{p}) \cdot \sigma^2 + (\underbrace{\mu \cdot (1-\frac{1}{p}) + (p-1) \cdot (-\frac{1}{p}) \cdot \mu}_{\underbrace{= \frac{p-1}{p} \cdot \mu + \frac{1-p}{p} \cdot \mu}_{=0}} \ldots \mu \cdot (1-\frac{1}{p}) + (p-1) \cdot (-\frac{1}{p}) \cdot \mu)
+\begin{pmatrix}
+\mu \\
+\vdots \\
+\mu
+\end{pmatrix} \\
+&= (p-1) \cdot \sigma^2 + (0 \ldots 0) \cdot
+\begin{pmatrix}
+\mu \\
+\vdots \\
+\mu
+\end{pmatrix} \\
+&= (p-1) \cdot \sigma^2
+\end{align*}
+
+## (c)
+
+$\text{Cov}(X_i, X_j) = \rho \sigma^2$, $i\neq j$, $\text{Cov}(X_i, X_i) = \sigma^2$.
+
+\begin{align*}
+\Sigma = \text{Cov}(X) &=
+\begin{pmatrix}
+\sigma^2        & \rho\sigma^2  & \rho\sigma^2  & \ldots        & \rho\sigma^2  \\
+\rho\sigma^2    & \sigma^2      & \rho\sigma^2  & \ldots        & \rho\sigma^2  \\
+\rho\sigma^2    & \rho\sigma^2  & \ddots        & \ldots        & \vdots        \\
+\vdots          & \vdots        & \ldots        & \ddots        & \rho\sigma^2  \\
+\rho\sigma^2    & \rho\sigma^2  & \ldots        & \rho\sigma^2  & \sigma^2
+\end{pmatrix} \\
+A = I - \frac{1}{p} J &=
+\begin{pmatrix}
+1 - \frac{1}{p} & - \frac{1}{p}     & - \frac{1}{p} & \ldots & - \frac{1}{p}    \\
+-\frac{1}{p}    & 1 - \frac{1}{p}   & - \frac{1}{p} & \ldots & - \frac{1}{p}    \\
+-\frac{1}{p}    & - \frac{1}{p}     & \ddots        & \ldots & \vdots           \\
+\vdots          & \vdots            & \ldots        & \ddots & \vdots           \\
+-\frac{1}{p}    & - \frac{1}{p}     & \ldots        & \ldots & 1 - \frac{1}{p}
+\end{pmatrix}
+\in \mathbb{R}^{p\times p}.
+\end{align*}
+
+\begin{align*}
+\text{tr}(A\Sigma)
+&= \sum_{i=1}^p (1-\frac{1}{p}) \cdot \sigma^2 + (p-1) \cdot (-\frac{1}{p}) \cdot \rho \sigma^2 \\
+&= p \cdot (1-\frac{1}{p}) \cdot \sigma^2 + (p-1) \cdot (-\frac{1}{p}) \cdot \rho \sigma^2 \\
+&= (p-1) \cdot \sigma^2 + (1-p) \rho \cdot \sigma^2 \\
+&= (p-1) \cdot \sigma^2 + (\rho - p \cdot \rho) \cdot \sigma^2 \\
+&= (p - 1 + \rho - p \cdot \rho) \cdot \sigma^2 \\
+\mathbb{E}[X^\top A X]
+&= \text{tr}(A\Sigma) + \underbrace{\mu^\top A \mu}_{=0 \text{ (as shown above)}} \\
+&= (p - 1 + \rho - p \cdot \rho) \cdot \sigma^2
+\end{align*}
+
+# Problem 2
+
+## (a)
+
+$X \sim \mathcal{N}(\mu, \Sigma)$.
+We have to prove that $Z = \Sigma^{-\frac{1}{2}}(X - \mu) \sim \mathcal{N}(0, I)$.
+
+\begin{align*}
+\mathbb{E}[Z]
+&= \mathbb{E}[\Sigma^{-\frac{1}{2}}(X-\mu)]
+= \Sigma^{-\frac{1}{2}}(\mathbb{E}[X]-\mu)
+= \Sigma^{-\frac{1}{2}}(\mu - \mu) = 0, \\
+\text{Var}(Z)
+&= \text{Var}(\Sigma^{-\frac{1}{2}}(X-\mu)) = (\Sigma^{-\frac{1}{2}})^2 \text{Var}(X - \mu) \\
+&= \Sigma^{-1} \cdot \text{Var}(X) = \Sigma^{-1} \cdot \Sigma = I. \\
+&\implies Z \sim \mathcal{N}(\mu, \Sigma).
+\end{align*}
+
+
+## (b)
+
+\begin{align*}
+Z
+&= \Sigma^{-\frac{1}{2}}(X-\mu) \\
+&= \Sigma^{-\frac{1}{2}}(X-0) \\
+&= \Sigma^{-\frac{1}{2}} \cdot X.
+\end{align*}
+
+```{r}
+Sigma <- matrix(data = c(1, -2, 0, -2, 5, 0, 0, 0, 2), nrow = 3, ncol = 3)
+print(Sigma)
+```
+
+Calculate the matrix square root:
+
+```{r}
+Sigma_sqrt <- expm::sqrtm(Sigma)
+print(Sigma_sqrt)
+```
+
+Check if the matrix square root times the matrix square root equals A:
+
+```{r}
+print(Sigma_sqrt %*% Sigma_sqrt)
+```
+```{r}
+Sigma_sqrt_inv <- solve(Sigma_sqrt)
+print(Sigma_sqrt_inv)
+```
+
+So it follows:
+
+\begin{align*}
+Z =
+\begin{pmatrix}
+2.1213203  \cdot x_1 + 0.7071068 \cdot x_2 \\
+0.7071068  \cdot x_1 + 0.7071068 \cdot x_2 \\
+0.7071068  \cdot x_3 \\
+\end{pmatrix}
+\end{align*}
+
+# Problem 3
+
+$X = (X_1, X_2)$ with joint pdf:
+\begin{align*}
+f(x_1, x_2) =
+\begin{cases}
+2\varphi(X_1)\varphi(X_2), & X_1 \cdot X_2 > 0, \\
+0, & \text{otherwise}
+\end{cases}
+\end{align*}
+where
+\begin{align*}
+\varphi(x) = \frac{1}{\sqrt{2\pi}}exp(\frac{-x}{2})
+\end{align*}
+
+\begin{align*}
+\implies f(x_1, x_2) = 2 \cdot \frac{1}{\sqrt{2\pi}}exp(\frac{-x_1}{2}) \cdot \frac{1}{\sqrt{2\pi}}exp(\frac{-x_2}{2}) \cdot I_{\{x_1 \cdot x_2 > 0\}}(x_1, x_2)
+\end{align*}
+
+*Case 1 (x_1, x_2 > 0):*
+
+\begin{align*}
+f_{X_1}(x_1)
+&= \int_0^\infty 2 \cdot \frac{1}{\sqrt{2\pi}}exp(\frac{-x_1}{2}) \cdot \frac{1}{\sqrt{2\pi}}exp(\frac{-x_2}{2}) dx_2 \\
+&= 2 \cdot \frac{1}{\sqrt{2\pi}}exp(\frac{-x_1}{2}) \int_0^\infty \frac{1}{\sqrt{2\pi}}exp(\frac{-x_2}{2}) dx_2 \\
+&= 2 \cdot \frac{1}{\sqrt{2\pi}}exp(\frac{-x_1}{2}) \cdot \frac{1}{2} \cdot \underbrace{\int_{-\infty}^\infty \frac{1}{\sqrt{2\pi}}exp(\frac{-x_2}{2}) dx_2}_{=1 \text{ (pdf of } \mathcal{N}(0,1) \text{ over its whole support)}} \\
+&= \frac{1}{\sqrt{2\pi}}exp(\frac{-x_1}{2}) \cdot I_{\{0,\infty\}}(x_1). \\
+f_{X_2}(x_2)
+&= \int_0^\infty 2 \cdot \frac{1}{\sqrt{2\pi}}exp(\frac{-x_2}{2}) \cdot \frac{1}{\sqrt{2\pi}}exp(\frac{-x_1}{2}) dx_1 \\
+&= 2 \cdot \frac{1}{\sqrt{2\pi}}exp(\frac{-x_2}{2}) \int_0^\infty \frac{1}{\sqrt{2\pi}}exp(\frac{-x_1}{2}) dx_1 \\
+&= 2 \cdot \frac{1}{\sqrt{2\pi}}exp(\frac{-x_2}{2}) \cdot \frac{1}{2} \cdot \underbrace{\int_{-\infty}^\infty \frac{1}{\sqrt{2\pi}}exp(\frac{-x_1}{2}) dx_1}_{=1 \text{( pdf of } \mathcal{N}(0,1) \text{ over its whole support)}} \\
+&= \frac{1}{\sqrt{2\pi}}exp(\frac{-x_2}{2}) \cdot I_{\{0,\infty\}}(x_2).
+\end{align*}
+
+*Case 2 (x_1, x_2 < 0):*
+
+\begin{align*}
+f_{X_1}(x_1)
+&= \int_0^\infty 2 \cdot \frac{1}{\sqrt{2\pi}}exp(\frac{-x_1}{2}) \cdot \frac{1}{\sqrt{2\pi}}exp(\frac{-x_2}{2}) dx_2 \\
+&= 2 \cdot \frac{1}{\sqrt{2\pi}}exp(\frac{-x_1}{2}) \int_{-\infty}^0 \frac{1}{\sqrt{2\pi}}exp(\frac{-x_2}{2}) dx_2 \\
+&= 2 \cdot \frac{1}{\sqrt{2\pi}}exp(\frac{-x_1}{2}) \cdot \frac{1}{2} \cdot \underbrace{\int_{-\infty}^\infty \frac{1}{\sqrt{2\pi}}exp(\frac{-x_2}{2}) dx_2}_{=1 \text{ (pdf of } \mathcal{N}(0,1) \text{ over its whole support)}} \\
+&= \frac{1}{\sqrt{2\pi}}exp(\frac{-x_1}{2}) \cdot I_{\{-\infty, 0\}}(x_1). \\
+f_{X_2}(x_2)
+&= \int_0^\infty 2 \cdot \frac{1}{\sqrt{2\pi}}exp(\frac{-x_2}{2}) \cdot \frac{1}{\sqrt{2\pi}}exp(\frac{-x_1}{2}) dx_1 \\
+&= 2 \cdot \frac{1}{\sqrt{2\pi}}exp(\frac{-x_2}{2}) \int_{-\infty}^0 \frac{1}{\sqrt{2\pi}}exp(\frac{-x_1}{2}) dx_1 \\
+&= 2 \cdot \frac{1}{\sqrt{2\pi}}exp(\frac{-x_2}{2}) \cdot \frac{1}{2} \cdot \underbrace{\int_{-\infty}^\infty \frac{1}{\sqrt{2\pi}}exp(\frac{-x_1}{2}) dx_1}_{=1 \text{( pdf of } \mathcal{N}(0,1) \text{ over its whole support)}} \\
+&= \frac{1}{\sqrt{2\pi}}exp(\frac{-x_2}{2}) \cdot I_{\{-\infty, 0\}}(x_2).
+\end{align*}
+
+Then
+\begin{align*}
+f_{X_1}(x_1)
+&= \frac{1}{\sqrt{2\pi}}exp(\frac{-x_1}{2}) \cdot I_{\{-\infty, \infty\}}(x_1), \\
+f_{X_2}(x_2)
+&= \frac{1}{\sqrt{2\pi}}exp(\frac{-x_2}{2}) \cdot I_{\{-\infty, \infty\}}(x_2).
+\end{align*}
+
+Thus, $f_{X_1}(x_1) \sim \mathcal{N}(0,1)$ and $f_{X_2}(x_2) \sim \mathcal{N}(0,1)$, but $X$ is not multivariate Normal since the support of $f(X_1, X_2)$ is not $\mathbb{R}^2$.
