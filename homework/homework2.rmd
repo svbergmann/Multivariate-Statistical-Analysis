@@ -200,6 +200,9 @@ Check if the matrix square root times the matrix square root equals A:
 ```{r}
 print(Sigma_sqrt %*% Sigma_sqrt)
 ```
+
+Calculate the inverse of the matrix square root:
+
 ```{r}
 Sigma_sqrt_inv <- solve(Sigma_sqrt)
 print(Sigma_sqrt_inv)
