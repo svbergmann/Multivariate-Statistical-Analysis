@@ -1,0 +1,110 @@
+---
+title: "MthStat 768"
+date: February 21, 2024
+output: pdf_document
+---
+
+```{r, echo = F}
+library(knitr)
+opts_chunk$set(tidy.opts = list(width.cutoff = 60), tidy = TRUE)
+```
+
+# Chapter 7: Principal Component Analysis
+```{r}
+iris <- read.csv(file = '../Data_csv/Iris.csv') # two points for knitting, one point for running it in the cell
+```
+```{r}
+unique(iris$class)
+```
+```{r}
+iris$class <- factor(iris$class)
+levels(iris$class)
+```
+```{r}
+levels(iris$class) <- c('Setosa', 'Versicolor', 'Virginica')
+levels(iris$class)
+```
+```{r}
+tapply(X = iris$petal_width, INDEX = iris$class, FUN = mean)
+```
+```{r}
+apply(X = iris[, 1:4], MARGIN = 2, FUN = sd)
+```
+```{r}
+iris[, 1:4] <- scale(x = iris[, 1:4])
+apply(X = iris[, 1:4], MARGIN = 2, FUN = sd)
+```
+```{r}
+pca <- princomp(~sepal_length +
+  sepal_width +
+  petal_length +
+  petal_width, data = iris)
+pca <- princomp(~. - class, data = iris)
+summary(pca)
+```
+
+The output of `princomp(..)` is a list with elements.
+- `sdev`: standard deviation of the components, $\sqrt{\lambda_k}$.
+- `loadings`: eigenvectors of v.
+- `scores`: component scores $\xi$.
+
+```{r}
+lmb <- pca$sdev^2
+lmb
+```
+```{r}
+cumsum(lmb) / sum(lmb)
+```
+
+Then q=2 gives a good approximation to the data.
+$\xi_i \in \mathbb{R}^2$
+
+```{r}
+xi <- pca$scores[, 1:2]
+xi
+```
+```{r}
+colnames(xi) <- c('PC1', 'PC2')
+```
+```{r}
+plot(xi[, 1], xi[, 2])
+```
+
+To see if the species of Iris are spatially separated, we can plot $\xi_{i1}$ vs $\xi_{i2}$.
+
+```{r}
+plot(xi[, 1], xi[, 2], col = iris$class, pch = 16)
+```
+```{r}
+plot(xi[iris$class == 'Setosa', 1], xi[iris$class == 'Setosa', 2], col = 'blue', pch = 16, xlim = c(-3, 4), ylim = c(-3, 3))
+points(xi[iris$class == 'Virginica', 1], xi[iris$class == 'Virginica', 2], col = 'red', pch = 16)
+points(xi[iris$class == 'Versicolor', 1], xi[iris$class == 'Versicolor', 2], col = 'green', pch = 16)
+```
+
+We see that Iris Setosa is well separated from the other species.
+Iris Virginica and Versicolor are also separated to some extent, but not as neatly as they are from Setosa.
+
+```{r}
+pca$loadings[, 1]
+```
+
+The eigenvectors are the loadings.
+$\xi_{i1}$ is a contrast between the average of (sepal length, petal length, petal width) and sepal width.
+
+---
+
+```{r}
+PAH <- read.csv(file = '../Data_csv/PAH.csv')
+```
+```{r}
+PAH <- PAH[, -(1:10)]
+```
+```{r}
+w <- seq(220, 350, by = 5)
+```
+```{r}
+plot(w, PAH[1,], type = 'l', lwd = 2)
+```
+```{r}
+matplot(w, t(PAH), type = 'l', lwd=2)
+```

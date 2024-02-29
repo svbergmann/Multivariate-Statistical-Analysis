@@ -1,0 +1,54 @@
+---
+title: "MthStat 768"
+date: February 28, 2024
+output: pdf_document
+---
+
+```{r, echo = F}
+library(knitr)
+opts_chunk$set(tidy.opts = list(width.cutoff = 60), tidy = TRUE)
+```
+```{r}
+tests <- read.csv('./Data_csv/24psychtestsPasteur.csv')
+tests <- tests[, -(1:2)]
+```
+```{r}
+x <- tests[, 1:4]
+x
+```
+```{r}
+y <- tests[, 6:9]
+y
+```
+```{r}
+Rxy <- cor(x, y)
+Rxy
+```
+```{r}
+library(expm)
+```
+```{r}
+Qx <- solve(sqrtm(Sx)) %*%
+  Sxy %*%
+  solve(Sy) %*%
+  t(Sxy) %*%
+  solve(sqrtm(Sx))
+Qx
+```
+```{r}
+Qy <- solve(sqrtm(Sy)) %*%
+  Sxy %*%
+  solve(Sx) %*%
+  t(Sxy) %*%
+  solve(sqrtm(Sy))
+Qy
+```
+```{r}
+eigen(Qx)$values
+```
+```{r}
+eigen(Qy)$values
+```
+```{r}
+?cancor
+```
