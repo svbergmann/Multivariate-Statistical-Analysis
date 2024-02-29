@@ -1,0 +1,37 @@
+---
+title: "Multivariate Statistical Analysis"
+subtitle: "Homework 3"
+author: Lucas Fellmeth, Helen Kafka, Sven Bergmann
+date: 02/28/24
+output: pdf_document
+---
+
+```{r, echo = F}
+library(knitr)
+opts_chunk$set(tidy.opts = list(width.cutoff = 60), tidy = TRUE)
+```
+
+# Problem 1
+
+```{r}
+swissbanknotes <- read.csv('../Data_csv/SwissBankNotes.csv')
+```
+
+## (a)
+
+## (b)
+
+## (c)
+
+# Problem 2
+
+```{r}
+turtles <- read.csv('../Data_csv/turtles.csv')
+```
+
+## (a)
+
+## (b)
+
+## (c)
+
