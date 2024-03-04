@@ -1,0 +1,96 @@
+---
+title: "MthStat 768"
+date: March 4, 2024
+output: pdf_document
+---
+
+```{r, echo = F}
+library(knitr)
+opts_chunk$set(tidy.opts = list(width.cutoff = 60), tidy = TRUE)
+```
+```{r}
+tests <- read.csv('./Data_csv/24psychtestsPasteur.csv')
+tests <- tests[, -(1:2)]
+```
+```{r}
+x <- tests[, 1:4]
+x
+```
+```{r}
+y <- tests[, 5:9]
+y
+```
+```{r}
+Sxx <- cov(x, x)
+Sxy <- cov(x, y)
+Syx <- cov(y, x)
+Syy <- cov(y, y)
+
+Qx <- solve(expm::sqrtm(Sxx)) %*%
+  Sxy %*%
+  solve(Syy) %*%
+  Syx %*%
+  solve(expm::sqrtm(Sxx))
+
+Qy <- solve(expm::sqrtm(Syy)) %*%
+  Syx %*%
+  solve(Sxx) %*%
+  Sxy %*%
+  solve(expm::sqrtm(Syy))
+```
+```{r}
+eigen(Qx)$values
+```
+```{r}
+eigen(Qy)$values
+```
+```{r}
+?cancor
+```
+```{r}
+cca <- cancor(x, y)
+```
+```{r}
+x <- scale(x)
+y <- scale(y)
+cca <- cancor(x, y)
+```
+```{r}
+xi1 <- x %*% cca$xcoef[, 1]
+omega1 <- y %*% cca$ycoef[, 1]
+plot(xi1, omega1)
+```
+```{r}
+x <- tests[, c(10, 24)]
+y <- tests[, 20:23]
+x <- scale(x)
+y <- scale(y)
+cca <- cancor(x, y)
+cca$cor
+```
+```{r}
+xi1 <- x %*% cca$xcoef[, 1]
+omega1 <- y %*% cca$ycoef[, 1]
+plot(xi1, omega1)
+```
+```{r}
+tests <- read.csv('./Data_csv/24psychtestsPasteur.csv')
+plot(xi1, omega1, pch = 16, col = as.numeric(factor(tests$Sex)))
+```
+
+# Chapter 8
+
+```{r}
+iris <- read.csv('./Data_csv/Iris.csv')
+iris$class <- factor(iris$class)
+```
+```{r}
+iris <- transform(iris, x1 = log(sepal_width / sepal_length), x2 = log(petal_width / petal_length))
+```
+```{r}
+hist(iris$x1)
+hist(iris$x2)
+```
+```{r}
+plot(x2 ~ x1, data = iris, col = class)
+```
