@@ -62,7 +62,7 @@ whereas Observations with large positive component scores $\text{ksi}_{i2}$ are 
 plot(pca_banknotes$scores[, 1], main = "Component Scores of first component", col = banknote_type, pch = 16)
 legend("topright", legend = levels(banknote_type), col = seq_along(banknote_type), pch = 16)
 plot(pca_banknotes$scores[, 2], main = "Component Scores of second component", col = banknote_type, pch = 16)
-legend("topright", legend = levels(banknote_type), col = seq_along(banknote_type), pch = 16)
+legend("bottomleft", legend = levels(banknote_type), col = seq_along(banknote_type), pch = 16)
 ```
 
 The two groups for counterfeit banknotes and genuine banknotes are pretty well separated for both components.
@@ -122,7 +122,7 @@ whereas observations with large positive component scores $\text{ksi}_{i2}$ are 
 plot(pca_turtles$scores[, 1], main = "Component Scores of first component", col = turtle_sex, pch = 16)
 legend("topright", legend = levels(turtle_sex), col = seq_along(turtle_sex), pch = 16)
 plot(pca_turtles$scores[, 2], main = "Component Scores of second component", col = turtle_sex, pch = 16)
-legend("topright", legend = levels(turtle_sex), col = seq_along(turtle_sex), pch = 16)
+legend("topleft", legend = levels(turtle_sex), col = seq_along(turtle_sex), pch = 16)
 ```
 
 The two groups for female turtles and male turtles are pretty well separated for both components.
