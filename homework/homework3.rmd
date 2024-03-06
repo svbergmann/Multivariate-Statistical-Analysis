@@ -1,0 +1,129 @@
+---
+title: "Multivariate Statistical Analysis"
+subtitle: "Homework 3"
+author: Lucas Fellmeth, Helen Kafka, Sven Bergmann
+date: 02/28/24
+output: pdf_document
+---
+
+```{r, echo = F}
+library(knitr)
+opts_chunk$set(tidy.opts = list(width.cutoff = 60), tidy = TRUE)
+```
+
+# Problem 1
+
+```{r}
+swissbanknotes <- read.csv('../Data_csv/SwissBankNotes.csv')
+swissbanknotes$class <- factor(swissbanknotes$class)
+banknote_type <- swissbanknotes$class
+```
+
+## (a)
+
+```{r}
+swissbanknotes2 <- scale(swissbanknotes[, -7])
+summary(swissbanknotes2)
+```
+```{r}
+pca_banknotes <- princomp(swissbanknotes2)
+summary(pca_banknotes)
+```
+
+The cumulative proportion of the first two components is $0.704$.
+
+## (b)
+
+```{r}
+pca_banknotes$loadings[, 1]
+```
+
+### Component 1
+
+The largest elements (in absolute value) correspond to height_left, height_right, diagonal length.
+So it's an index of height / diagonal length, where diagonal length has a negative sign.
+Observations with large negative component scores $\text{ksi}_{i1}$ are shorter banknotes with longer diagonal
+whereas observations with large positive component scores $\text{ksi}_{i1}$ are taller banknotes with a shorter diagonal.
+
+```{r}
+pca_banknotes$loadings[, 2]
+```
+
+### Component 2
+
+The largest element (in absolute value) corresponds to length.
+So it's an index of banknote length.
+Observations with large negative component scores $\text{ksi}_{i2}$ are shorter banknotes
+whereas Observations with large positive component scores $\text{ksi}_{i2}$ are longer banknotes.
+
+## (c)
+
+```{r}
+plot(pca_banknotes$scores[, 1], main = "Component Scores of first component", col = banknote_type, pch = 16)
+legend("topright", legend = levels(banknote_type), col = seq_along(banknote_type), pch = 16)
+plot(pca_banknotes$scores[, 2], main = "Component Scores of second component", col = banknote_type, pch = 16)
+legend("topright", legend = levels(banknote_type), col = seq_along(banknote_type), pch = 16)
+```
+
+The two groups for counterfeit banknotes and genuine banknotes are pretty well separated for both components.
+
+# Problem 2
+
+```{r}
+turtles <- read.csv('../Data_csv/turtles.csv')
+turtle_sex <- factor(turtles$sex)
+turtles <- turtles[-1]
+```
+
+## (a)
+
+Before applying log we check if there are any zero values.
+
+```{r}
+which(turtles == 0)
+```
+```{r}
+turtles2 <- log(turtles)
+turtles2 <- scale(turtles2)
+pca_turtles <- princomp(turtles2)
+summary(pca_turtles)
+```
+
+The cumulative proportion of the first two components is $0.992$.
+
+## (b)
+
+```{r}
+pca_turtles$loadings[, 1]
+```
+
+### Component 1
+
+The largest elements (in absolute value) correspond to length, width and height
+So it's a positive index of length, width and height.
+Observations with large negative component scores $\text{ksi}_{i1}$ are turtles with smaller length,
+width and height whereas Observations with large positive component scores $\text{ksi}_{i1}$ are turtles with larger length, width and height.
+
+```{r}
+pca_turtles$loadings[, 2]
+```
+
+### Component 2
+
+The largest element (in absolute value) corresponds to height.
+So it's a negative index of turtle height.
+Observations with large negative component scores $\text{ksi}_{i2}$ are taller turtles
+whereas observations with large positive component scores $\text{ksi}_{i2}$ are shorter turtles.
+
+
+## (c)
+
+```{r}
+plot(pca_turtles$scores[, 1], main = "Component Scores of first component", col = turtle_sex, pch = 16)
+legend("topright", legend = levels(turtle_sex), col = seq_along(turtle_sex), pch = 16)
+plot(pca_turtles$scores[, 2], main = "Component Scores of second component", col = turtle_sex, pch = 16)
+legend("topright", legend = levels(turtle_sex), col = seq_along(turtle_sex), pch = 16)
+```
+
+The two groups for female turtles and male turtles are pretty well separated for both components.
+
