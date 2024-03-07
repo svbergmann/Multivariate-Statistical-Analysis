@@ -42,8 +42,8 @@ pca_banknotes$loadings[, 1]
 
 The largest elements (in absolute value) correspond to height_left, height_right, diagonal length.
 So it's an index of height / diagonal length, where diagonal length has a negative sign.
-Observations with large negative component scores $\text{ksi}_{i1}$ are shorter banknotes with longer diagonal
-whereas observations with large positive component scores $\text{ksi}_{i1}$ are taller banknotes with a shorter diagonal.
+Observations with large negative component scores $\xi_{i1}$ are shorter banknotes with longer diagonal
+whereas observations with large positive component scores $\xi_{i1}$ are taller banknotes with a shorter diagonal.
 
 ```{r}
 pca_banknotes$loadings[, 2]
@@ -53,8 +53,8 @@ pca_banknotes$loadings[, 2]
 
 The largest element (in absolute value) corresponds to length.
 So it's an index of banknote length.
-Observations with large negative component scores $\text{ksi}_{i2}$ are shorter banknotes
-whereas Observations with large positive component scores $\text{ksi}_{i2}$ are longer banknotes.
+Observations with large negative component scores $\xi_{i2}$ are shorter banknotes
+whereas Observations with large positive component scores $\xi_{i2}$ are longer banknotes.
 
 ## (c)
 
@@ -101,8 +101,8 @@ pca_turtles$loadings[, 1]
 
 The largest elements (in absolute value) correspond to length, width and height
 So it's a positive index of length, width and height.
-Observations with large negative component scores $\text{ksi}_{i1}$ are turtles with smaller length,
-width and height whereas Observations with large positive component scores $\text{ksi}_{i1}$ are turtles with larger length, width and height.
+Observations with large negative component scores $\xi_{i1}$ are turtles with smaller length,
+width and height whereas Observations with large positive component scores $\xi_{i1}$ are turtles with larger length, width and height.
 
 ```{r}
 pca_turtles$loadings[, 2]
@@ -112,8 +112,8 @@ pca_turtles$loadings[, 2]
 
 The largest element (in absolute value) corresponds to height.
 So it's a negative index of turtle height.
-Observations with large negative component scores $\text{ksi}_{i2}$ are taller turtles
-whereas observations with large positive component scores $\text{ksi}_{i2}$ are shorter turtles.
+Observations with large negative component scores $\xi_{i2}$ are taller turtles
+whereas observations with large positive component scores $\xi_{i2}$ are shorter turtles.
 
 
 ## (c)
@@ -121,6 +121,8 @@ whereas observations with large positive component scores $\text{ksi}_{i2}$ are 
 ```{r}
 plot(pca_turtles$scores[, 1], main = "Component Scores of first component", col = turtle_sex, pch = 16)
 legend("topright", legend = levels(turtle_sex), col = seq_along(turtle_sex), pch = 16)
+```
+```{r}
 plot(pca_turtles$scores[, 2], main = "Component Scores of second component", col = turtle_sex, pch = 16)
 legend("topleft", legend = levels(turtle_sex), col = seq_along(turtle_sex), pch = 16)
 ```

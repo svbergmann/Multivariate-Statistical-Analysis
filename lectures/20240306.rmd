@@ -1,0 +1,27 @@
+---
+title: "MthStat 768"
+date: March 6, 2024
+output: pdf_document
+---
+
+```{r, echo = F}
+library(knitr)
+opts_chunk$set(tidy.opts = list(width.cutoff = 60), tidy = TRUE)
+```
+
+```{r}
+iris <- read.csv('./Data_csv/Iris.csv')
+iris$class <- factor(iris$class)
+levels(iris$class) <- c("Setosa", "Versicolor", "Virginica")
+```
+```{r}
+with(iris, {
+  plot(sepal_length[class == "Setosa"], sepal_width[class == "Setosa"], col = "red")
+  points(sepal_length[class == "Versicolor"], sepal_width[class == "Versicolor"], col = "blue")
+  points(sepal_length[class == "Virginica"], sepal_width[class == "Virginica"], col = "green")
+})
+```
+```{r}
+
+```
+
