@@ -1,0 +1,49 @@
+---
+title: "MthStat 768"
+date: March 13, 2024
+output: pdf_document
+---
+
+```{r, echo = F}
+library(knitr)
+opts_chunk$set(tidy.opts = list(width.cutoff = 60), tidy = TRUE)
+```
+```{r}
+library(nnet)
+```
+```{r}
+iris <- read.csv(file = './Data_csv/Iris.csv')
+iris$class <- factor(iris$class)
+levels(iris$class) <- c('Setosa', 'Versicolor', 'Virginica')
+```
+```{r}
+iris <- transform(iris, x1 = log(sepal_width / sepal_length), x2 = log(petal_width, petal_length))
+plot(x1 ~ x2, data = iris, pch = 16, col = iris$class)
+```
+```{r}
+iris_color <- ifelse(iris$class == 'Setosa', 'blue', ifelse(iris$class == 'Virginica', 'red', 'green'))
+iris_color
+plot(x1 ~ x2, data = iris, pch = 16, color = iris_color)
+```
+```{r}
+i_test <- sample(1:150, size = 30)
+iris_test <- iris[i_test,]
+iris_train <- iris[-i_test,]
+out <- multinom(class ~ sepal_length +
+  sepal_width +
+  petal_length +
+  petal_width,
+                data = iris,
+                maxit = 100)
+out
+```
+```{r}
+predicted_class <- predict(out, newdata = iris_test)
+predicted_class
+```
+```{r}
+iris_test$class
+```
+```{r}
+table(predicted_class, iris_test$class)
+```
