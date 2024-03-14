@@ -50,7 +50,7 @@ mctable <- table(gr_hat, bupa_liver_disorder_test$class)
 mctable
 ```
 ```{r}
-1 - sum(diag(mctable)) / length(bupa_liver_disorder$class)
+1 - sum(diag(mctable)) / length(bupa_liver_disorder_test$class)
 ```
 
 # Problem 2
@@ -84,5 +84,5 @@ out
 mctable <- table(predict(out, newdata = ecoli_test), ecoli_test$localization_site)
 ```
 ```{r}
-1 - sum(diag(mctable)) / length(ecoli$localization_site)
+1 - sum(diag(mctable)) / length(ecoli_test$localization_site)
 ```
