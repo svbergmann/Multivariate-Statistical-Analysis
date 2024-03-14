@@ -29,6 +29,10 @@ plot(x1 ~ x2, data = iris, pch = 16, color = iris_color)
 i_test <- sample(1:150, size = 30)
 iris_test <- iris[i_test,]
 iris_train <- iris[-i_test,]
+iris_test
+iris_train
+```
+```{r}
 out <- multinom(class ~ sepal_length +
   sepal_width +
   petal_length +

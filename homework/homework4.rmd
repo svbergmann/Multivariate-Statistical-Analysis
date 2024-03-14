@@ -1,0 +1,88 @@
+---
+title: "Multivariate Statistical Analysis"
+subtitle: "Homework 4"
+author: Lucas Fellmeth, Helen Kafka, Sven Bergmann
+date: 03/13/24
+output: pdf_document
+---
+
+```{r, echo = F}
+library(knitr)
+opts_chunk$set(tidy.opts = list(width.cutoff = 60), tidy = TRUE)
+```
+```{r}
+set.seed(42)
+```
+# Problem 1
+
+Consider the ``bupa_liver_disorder`` data set,
+where a number of individuals are classified into two classes according to blood test results
+(see full description on p. 258 of the book).
+
+```{r}
+bupa_liver_disorder <- read.csv(file = '../Data_csv/bupa_liver_disorder.csv')
+bupa_liver_disorder$class <- factor(bupa_liver_disorder$class)
+```
+
+## a)
+
+Split the data set into training and test sets (roughly a 70/30 split).
+Compute the logistic classifier using the training set.
+
+```{r}
+i_test <- sample(seq_along(bupa_liver_disorder[,1]), size = length(bupa_liver_disorder[,1]) * 0.3)
+bupa_liver_disorder_test <- bupa_liver_disorder[i_test,]
+bupa_liver_disorder_train <- bupa_liver_disorder[-i_test,]
+```
+```{r}
+out <- glm(formula = class ~ mcv + alkphos + sgpt + sgot + gammagt + drinks, data = bupa_liver_disorder_train, family = binomial)
+out$coefficients
+```
+
+## b)
+
+Construct the misclassification table and compute the misclassification rate for the test set.
+
+```{r}
+pi1_hat <- predict(out, type = 'response', newdata = bupa_liver_disorder_test)
+gr_hat <- ifelse(pi1_hat > 0.5, 1, 2)
+mctable <- table(gr_hat, bupa_liver_disorder_test$class)
+mctable
+```
+```{r}
+1 - sum(diag(mctable)) / length(bupa_liver_disorder$class)
+```
+
+# Problem 2
+
+Consider the ``ecoli`` data set.
+These data were obtained in a study of protein localization sites for 336 examples of E. coli.
+There are 7 predictor variables and a class variable, localization_site, which indicates the protein localization.
+
+```{r}
+ecoli <- read.csv(file='../Data_csv/ecoli.csv')
+ecoli$localization_site <- factor(ecoli$localization_site)
+```
+
+## a)
+
+Split the data set into training and test sets (roughly a 80/20 split).
+Compute the multinomial logistic classifier using the training set.
+
+```{r}
+i_test <- sample(seq_along(ecoli[,1]), size = length(ecoli[,1]) * 0.2)
+ecoli_test <- ecoli[i_test,]
+ecoli_train <- ecoli[-i_test,]
+```
+```{r}
+out <- nnet::multinom(localization_site ~ mvg + gvh + lip + chg + aac + alm1 + alm2,
+                data = ecoli,
+                maxit = 100)
+out
+```
+```{r}
+mctable <- table(predict(out, newdata = ecoli_test), ecoli_test$localization_site)
+```
+```{r}
+1 - sum(diag(mctable)) / length(ecoli$localization_site)
+```
