@@ -45,7 +45,7 @@ Construct the misclassification table and compute the misclassification rate for
 
 ```{r}
 pi1_hat <- predict(out, type = 'response', newdata = bupa_liver_disorder_test)
-gr_hat <- ifelse(pi1_hat > 0.5, 1, 2)
+gr_hat <- ifelse(pi1_hat > 0.5, 2, 1)
 mctable <- table(gr_hat, bupa_liver_disorder_test$class)
 mctable
 ```
