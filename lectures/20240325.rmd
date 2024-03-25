@@ -1,0 +1,32 @@
+---
+title: "MthStat 768"
+date: March 25, 2024
+output: pdf_document
+---
+
+```{r, echo = F}
+library(knitr)
+opts_chunk$set(tidy.opts = list(width.cutoff = 60), tidy = TRUE)
+```
+```{r}
+library(rpart)
+```
+```{r}
+swiss <- read.csv(file = "./Data_csv/SwissBankNotes.csv")
+summary(swiss)
+```
+```{r}
+swiss$class <- factor(swiss$class)
+itest <- sample(1:200, size = 60)
+swiss_test <- swiss[itest,]
+swiss_train <- swiss[-itest,]
+```
+```{r}
+tree <- rpart(formula = class ~ . - class, data = swiss_train)
+plot(tree)
+text(tree, use.n = TRUE, cex = 0.8)
+```
+```{r}
+predicted_class <- predict(tree, newdata = swiss_test, type = 'class')
+table(predicted_class, swiss_test$class)
+```
