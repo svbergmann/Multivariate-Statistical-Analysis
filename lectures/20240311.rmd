@@ -1,0 +1,72 @@
+---
+title: "MthStat 768"
+date: March 11, 2024
+output: pdf_document
+---
+
+```{r, echo = F}
+library(knitr)
+opts_chunk$set(tidy.opts = list(width.cutoff = 60), tidy = TRUE)
+```
+
+```{r}
+turtles <- read.csv('./Data_csv/turtles.csv')
+turtles$sex <- factor(turtles$sex)
+```
+```{r}
+library(plot3D)
+```
+```{r}
+scatter3D(x = turtles$length, y = turtles$width, z = turtles$height, colvar = NULL, pch = 16, col = ifelse(turtles$sex == 'f', 'red', 'blue'), theta = 30, phi = 40)
+```
+```{r}
+out <- glm(formula = sex ~ length + width + height, data = turtles, family = binomial)
+out$coefficients
+```
+```{r}
+fitted(out)
+```
+```{r}
+pi1_hat <- fitted(out)
+gr_hat <- ifelse(pi1_hat > 0.5, 'm', 'f')
+gr_hat
+```
+```{r}
+mctable <- table(gr_hat, turtles$sex)
+mctable
+```
+```{r}
+1 - sum(diag(mctable)) / length(turtles$sex)
+```
+```{r}
+newdata <- data.frame(length = 100, width = 75, height = 40)
+```
+```{r}
+predict(out, type = 'response')
+```
+```{r}
+predict(out, type = 'response', newdata = newdata)
+```
+```{r}
+i_test <- sample(1:48, size = 10)
+i_test
+```
+```{r}
+x_test <- turtles[i_test,]
+x_train <- turtles[-i_test,]
+```
+```{r}
+out <- glm(formula = sex ~ length + width + height, data = x_train, family = binomial)
+coefficients(out)
+```
+```{r}
+pi1_hat <- predict(out, type = 'response', newdata = x_test)
+pi1_hat
+```
+```{r}
+gr_hat <- ifelse(pi1_hat > 0.5, 'm', 'f')
+gr_hat
+```
+```{r}
+table(gr_hat, x_test$sex)
+```
