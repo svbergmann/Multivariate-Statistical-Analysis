@@ -1,0 +1,50 @@
+---
+title: "MthStat 768"
+date: March 27, 2024
+output: pdf_document
+---
+
+```{r, echo = F}
+library(knitr)
+opts_chunk$set(tidy.opts = list(width.cutoff = 60), tidy = TRUE)
+```
+```{r}
+library(nnet)
+```
+```{r}
+iris <- read.csv(file = './Data_csv/Iris.csv')
+iris$class <- factor(iris$class)
+itest <- sample(150, size = 30)
+iris_test <- iris[itest,]
+iris_train <- iris[-itest,]
+```
+```{r}
+net <- nnet(class ~ . - class, data = iris_train, size = 1)
+```
+```{r}
+summary(net)
+```
+```{r}
+predict(net)
+```
+```{r}
+yhat <- predict(net, newdata = iris_test)
+yhat
+```
+```{r}
+yhat <- predict(net, newdata = iris_test, type = 'class')
+yhat
+```
+```{r}
+table(iris_test$class, yhat)
+```
+```{r}
+net <- nnet(class ~ . - class, data = iris_train, size = 1, Wts = rep(0, 11))
+```
+```{r}
+yhat <- predict(net, newdata = iris_test, type = 'class')
+yhat
+```
+```{r}
+table(iris_test$class, yhat)
+```
