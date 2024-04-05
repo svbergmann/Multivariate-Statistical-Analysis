@@ -1,99 +1,70 @@
 ---
-title: "MthStat 768"
-date: March 27, 2024
+title: "conferencia diece"
 output: pdf_document
 ---
 
-```{r, echo = F}
-library(knitr)
-opts_chunk$set(tidy.opts = list(width.cutoff = 60), tidy = TRUE)
-```
+
 ```{r}
-iris <- read.csv("./Data_csv/Iris.csv")
+iris <- read.csv("Data_csv/Iris.csv")
 iris$class <- factor(iris$class)
-levels(iris$class)
-levels(iris$class) <- c("Setosa", "Versicolor", "Virginica")
-iris <- subset(iris, subset = class %in% c("Setosa", "Versicolor"))
-iris <- transform(iris, X1 = log(sepal_length / sepal_width), X2 = log(petal_length / petal_width))
-plot(X2 ~ X1, data = iris, col = as.numeric(class), pch = 16)
+levels(iris$class) <- c("setosa", "versicolor", "virginica")
+iris <- subset(iris, subset = class %in% c("setosa", "versicolor"))
+iris <- transform(iris,X1=log(sepal_length/sepal_width),X2 = log(petal_length/petal_width))
+plot(X2~X1,data=iris,pch =16, col= class)
 ```
 ```{r}
-library("e1071")
-```
-```{r}
-iris$class <- factor(iris$class, levels = c("Setosa", "Versicolor"))
-levels(iris$class)
-```
-```{r}
-#svmfit <- svm(class ~ X1 + X2, data = iris, cost = Inf, kernel = "linear")
-```
-```{r}
-svmfit <- svm(class ~ X1 + X2, data = iris, cost = 10^10, kernel = "linear")
+library(e1071)
+iris$class <- factor(iris$class,levels = c("setosa", "versicolor"))
+svmfit <- svm(class~X1 + X2,data=iris, cost =10^{10}, kernel = "linear")
 summary(svmfit)
 ```
 ```{r}
 svmfit$SV
 ```
 ```{r}
-print(svmfit)
+plot(svmfit,data=iris,X2~X1,grid=200)
 ```
 ```{r}
-plot(svmfit, data = iris, X2 ~ X1)
-```
-```{r}
-plot(svmfit, data = iris, X2 ~ X1, grid = 200)
-```
-```{r}
-plot(svmfit, data = iris, X2 ~ X1, grid = 200, col = as.numeric(iris$class))
-```
-```{r}
-plot(svmfit, data = iris, X2 ~ X1, grid = 200)
-```
-```{r}
-swiss <- read.csv("./Data_csv/SwissBankNotes.csv")
+rm(list=ls())
+swiss <- read.csv("Data_csv/SwissBankNotes.csv")
 swiss$class <- factor(swiss$class)
-svmfit <- svm(class ~ . - class, data = swiss, cost = 10^10, kernel = "linear")
+svmfit <- svm(class~.-class, data = swiss,cost =10^10,kernel="linear")
 summary(svmfit)
 ```
 ```{r}
+rm(list = ls())
 bupa <- read.csv("Data_csv/bupa_liver_disorder.csv")
-unique(bupa$class)
 bupa$class <- factor(bupa$class)
-svmfit <- svm(class ~ . - class, data = bupa, cost = 10^10, kernel = "linear")
-itest <- sample(345, size = 70)
-bupa_test <- bupa[itest,]
-bupa_train <- bupa[-itest,]
+svmfit <- svm(class~.-class, data = bupa,cost =10^10,kernel="linear")
+
 ```
 ```{r}
-svmfit <- svm(class ~ . - class, data = bupa_train, cost = 10^2, kernel = "linear")
-pred_class <- predict(svmfit, newdata = bupa_test)
-pred_class
+i_test <- sample(nrow(bupa),size = 70)
+bupa_test <-bupa[i_test,]
+bupa_train <- bupa[-i_test,]
 ```
 ```{r}
-table(bupa_test$class, pred_class)
+svmfit <- svm(class~.-class, data = bupa_train,cost =10^2,kernel="linear")
+pred_class <- predict(svmfit,newdata=bupa_test)
+table(bupa_test$class,pred_class)
 ```
 ```{r}
-svmfit <- svm(class ~ . - class, data = bupa_train, cost = 10^3, kernel = "linear")
-pred_class <- predict(svmfit, newdata = bupa_test)
-table(bupa_test$class, pred_class)
+svmfit <- svm(class~.-class, data = bupa_train,cost =10^3,kernel="linear")
+pred_class <- predict(svmfit,newdata=bupa_test)
+table(bupa_test$class,pred_class)
 ```
 ```{r}
-svmfit <- svm(class ~ . - class, data = bupa_train, cost = 10, kernel = "linear")
-pred_class <- predict(svmfit, newdata = bupa_test)
-table(bupa_test$class, pred_class)
+svmfit <- svm(class~.-class, data = bupa_train,cost =10,kernel="linear")
+pred_class <- predict(svmfit,newdata=bupa_test)
+table(bupa_test$class,pred_class)
 ```
 ```{r}
-svmfit <- svm(class ~ . - class, data = bupa_train, cost = 1, kernel = "linear")
-pred_class <- predict(svmfit, newdata = bupa_test)
-table(bupa_test$class, pred_class)
+svmfit <- svm(class~.-class, data = bupa_train,cost =1,kernel="linear")
+pred_class <- predict(svmfit,newdata=bupa_test)
+table(bupa_test$class,pred_class)
 ```
 ```{r}
-svmfit <- svm(class ~ . - class, data = bupa_train, cost = 0.1, kernel = "linear")
-pred_class <- predict(svmfit, newdata = bupa_test)
-table(bupa_test$class, pred_class)
-```
-```{r}
-svmfit <- svm(class ~ . - class, data = bupa_train, cost = 0.01, kernel = "linear")
-pred_class <- predict(svmfit, newdata = bupa_test)
-table(bupa_test$class, pred_class)
+svmfit <- svm(class~.-class, data = bupa_train,cost =0.1,kernel="linear")
+pred_class <- predict(svmfit,newdata=bupa_test)
+table(bupa_test$class,pred_class)
 ```
