@@ -10,6 +10,11 @@ output: pdf_document
 library(knitr)
 opts_chunk$set(tidy.opts = list(width.cutoff = 60), tidy = TRUE)
 ```
+```{r, warning = F, message = F, error = F}
+library(nnet)
+library(caret)
+library("e1071")
+```
 ```{r}
 set.seed(42)
 ```
@@ -36,10 +41,7 @@ pendigit_train <- pendigit[-i_test_pendigit,]
 Fit single-layer neural networks to the training data, with one, two and three hidden nodes (or more if necessary).
 
 ```{r}
-library(nnet)
-```
-```{r}
-num_hidden_nodes_pendigit <- 5
+num_hidden_nodes_pendigit <- 10
 nnets_pendigit <- vector(mode = 'list', length = num_hidden_nodes_pendigit)
 for (i in 1:num_hidden_nodes_pendigit) {
   nnets_pendigit[[i]] <- nnet(digit ~ . - digit, data = pendigit_train, size = i, trace = F)
@@ -49,9 +51,16 @@ for (i in 1:num_hidden_nodes_pendigit) {
 Compute the respective misclassification rates on the test set.
 
 ```{r}
-mctables_pendigit <- vector(mode = 'list', length = num_hidden_nodes_pendigit)
+confusion_matrices_pendigit <- vector(mode = 'list', length = num_hidden_nodes_pendigit)
 for (i in 1:num_hidden_nodes_pendigit) {
-  mctables_pendigit[[i]] <- table(pendigit_test$digit, predict(nnets_pendigit[[i]], newdata = pendigit_test, type = 'class'))
+  predictions <- factor(predict(nnets_pendigit[[i]], newdata = pendigit_test, type = 'class'), levels = levels(pendigit_test$digit))
+  confusion_matrices_pendigit[[i]] <- confusionMatrix(predictions, pendigit_test$digit)
+}
+```
+```{r}
+mscrs_pendigit <- vector(mode = 'list', length = num_hidden_nodes_pendigit)
+for (i in 1:num_hidden_nodes_pendigit) {
+  mscrs_pendigit[[i]] <- 1 - confusion_matrices_pendigit[[i]]$overall["Accuracy"]
 }
 ```
 
@@ -59,11 +68,20 @@ What's the lowest misclassification rate attained?
 
 ```{r}
 for (i in 1:num_hidden_nodes_pendigit) {
-  print(paste('Misclassification rate for set ', i, ':', 1 - (sum(diag(mctables_pendigit[[i]])) / length(pendigit_test$digit))))
+  cat('Misclassification rate for', i, 'hidden nodes:', mscrs_pendigit[[i]], '\n')
 }
 ```
 
+```{r}
+cat('The lowest misclassificationrate is on the neural network \n with', which.min(mscrs_pendigit), 'hidden nodes and a rate of', mscrs_pendigit[[which.min(mscrs_pendigit)]], '.')
+```
+```{r}
+print(confusion_matrices_pendigit[[which.min(mscrs_pendigit)]])
+```
+
 From the cross-classification tables, which digits have the largest misclassification rates?
+
+It seems like the 2 gets predicted as 1 fairly often (75) times.
 
 # Problem 2
 
@@ -86,16 +104,12 @@ spambase_train <- spambase[-i_test_spambase,]
 
 Fit a linear support vector machine classifier to the training data, starting with a very large ("infinite") cost, in the event the groups are separable, and progressively lowering the cost if they aren't.
 
-```{r}
-library("e1071")
-```
-
-We omitted the following code with ``cost=Inf`` because there was an error message.
+We omitted the following code with ``cost=Inf`` because there was an error message:
+"Error in svm.default(x, y, scale = scale, ..., na.action = na.action): NA/NaN/Inf in foreign function call (arg 12)"
 
 ```{r}
 # svmfit_inf_spambase <- svm(class ~ . - class, data = spambase_train, cost = Inf, kernel = 'linear')
-# summary(svmfit_inf_spambase) # Error in svm.default(x, y, scale = scale, ..., na.action = na.action):
-# NA/NaN/Inf in foreign function call (arg 12)
+# summary(svmfit_inf_spambase)
 ```
 
 ```{r}
@@ -110,24 +124,30 @@ for (i in num_iterations_spambase:1) {
 Compute the respective misclassification rates on the test set.
 
 ```{r}
-mctables_spambase <- vector(mode = 'list', length = num_iterations_spambase)
+confusion_matrices_spambase <- vector(mode = 'list', length = num_iterations_spambase)
 for (i in 1:num_iterations_spambase) {
-  mctables_spambase[[i]] <- table(spambase_test$class, predict(svmfits_spambase[[i]], newdata = spambase_test, type = 'class'))
+  predictions <- factor(predict(svmfits_spambase[[i]], newdata = spambase_test, type = 'class'), levels = levels(spambase_test$class))
+  confusion_matrices_spambase[[i]] <- confusionMatrix(predictions, spambase_test$class)
+}
+```
+```{r}
+mscrs_spambase <- vector(mode = 'list', length = num_iterations_spambase)
+for (i in 1:num_iterations_spambase) {
+  mscrs_spambase[[i]] <- 1 - confusion_matrices_spambase[[i]]$overall["Accuracy"]
 }
 ```
 
 ```{r}
-mscrs_spambase <- vector(mode = 'list', length = num_iterations_spambase)
 for (i in 1:num_iterations_spambase) {
-  mscrs_spambase[[i]] <- 1 - (sum(diag(mctables_spambase[[i]])) / length(spambase_test$class))
-}
-for (i in 1:num_iterations_spambase) {
-  print(paste('Misclassification rate for set ', i, ':', mscrs_spambase[[i]]))
+  cat('Misclassification rate for a svm with the cost', 10^i, 'is:', mscrs_spambase[[i]], '\n')
 }
 ```
 
 What's the lowest misclassification rate attained?
 
 ```{r}
-paste('The lowest misclassificationrate is on set', which.min(mscrs_spambase), 'with a cost of', 10^which.min(mscrs_spambase))
+cat('The lowest misclassificationrate is on the svm \n with a cost of', 10^which.min(mscrs_spambase), 'and a rate of', mscrs_spambase[[which.min(mscrs_spambase)]], '.')
+```
+```{r}
+print(confusion_matrices_spambase[[which.min(mscrs_spambase)]])
 ```

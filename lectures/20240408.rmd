@@ -1,0 +1,63 @@
+---
+title: "MthStat 768"
+date: April 08, 2024
+output: pdf_document
+---
+
+```{r, echo = F}
+library(knitr)
+opts_chunk$set(tidy.opts = list(width.cutoff = 60), tidy = TRUE)
+```
+
+
+```{r}
+set.seed(10)
+```
+```{r}
+x <- matrix(runif(200, min = -1, max = 1), 100, 2)
+plot(x[, 1], x[, 2], pch = 16)
+```
+```{r}
+y <- ifelse(x[, 1]^2 + x[, 2]^2 < (1 / 2)^2, 'g1', 'g2')
+y <- as.factor(y)
+plot(x[, 1], x[, 2], pch = 16, col = as.numeric(y))
+```
+```{r}
+mydata <- data.frame(x = x, y = y)
+```
+```{r}
+svmout <- e1071::svm(y ~ x.1 + x.2, data = mydata, kernel = 'radial', gamma = 1, cost = 10^10)
+summary(svmout)
+```
+```{r}
+plot(svmout, data = mydata, x.2 ~ x.1, grid = 200)
+```
+```{r}
+svmout <- e1071::svm(y ~ x.1 + x.2, data = mydata, kernel = 'radial', gamma = 10, cost = 10^10)
+plot(svmout, data = mydata, x.2 ~ x.1, grid = 200)
+```
+```{r}
+bupa <- read.csv(file = 'Data_csv/bupa_liver_disorder.csv')
+bupa$class <- factor(bupa$class)
+itest <- sample(345, size = 70)
+bupa_train <- bupa[-itest,]
+bupa_test <- bupa[itest,]
+```
+```{r}
+svmout <- e1071::svm(class ~ . - class, data = bupa_train, kernel = 'radial', cost = 10^10)
+```
+```{r}
+pred_class <- predict(svmout, newdata = bupa_test)
+table(bupa_test$class, pred_class)
+```
+```{r}
+svmout <- e1071::svm(class ~ . - class, data = bupa_train, gamma = 10, kernel = 'radial', cost = 10^10)
+pred_class <- predict(svmout, newdata = bupa_test)
+table(bupa_test$class, pred_class)
+```
+
+```{r}
+svmout <- e1071::svm(class ~ . - class, data = bupa_train, gamma = 0.1, kernel = 'radial', cost = 10^10)
+pred_class <- predict(svmout, newdata = bupa_test)
+table(bupa_test$class, pred_class)
+```
