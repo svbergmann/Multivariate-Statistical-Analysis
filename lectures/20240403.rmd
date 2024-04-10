@@ -1,7 +1,13 @@
 ---
-title: "conferencia diece"
+title: "MthStat 768"
+date: April 03, 2024
 output: pdf_document
 ---
+
+```{r, echo = F}
+library(knitr)
+opts_chunk$set(tidy.opts = list(width.cutoff = 60), tidy = TRUE)
+```
 
 
 ```{r}

@@ -1,0 +1,63 @@
+---
+title: "MthStat 768"
+date: April 10, 2024
+output: pdf_document
+---
+
+```{r, echo = F}
+library(knitr)
+opts_chunk$set(tidy.opts = list(width.cutoff = 60), tidy = TRUE)
+```
+
+
+```{r}
+set.seed(10)
+```
+```{r}
+geyser <- read.csv(file = 'Data_csv/OldFaithfulGeyser.csv')
+plot(X2 ~ X1, data = geyser, pch = 16)
+```
+```{r}
+geyser <- scale(geyser)
+plot(X2 ~ X1, data = geyser, pch = 16, asp = 1)
+```
+```{r}
+D <- dist(geyser)
+```
+```{r}
+hc <- hclust(D, method = 'single')
+plot(hc)
+```
+```{r}
+plot(hc, hang = -1)
+```
+```{r}
+clusters <- cutree(hc, h = 0.6)
+clusters
+```
+```{r}
+plot(X2 ~ X1, data = geyser, pch = 16, asp = 1, col = clusters)
+```
+```{r}
+clusters <- cutree(hc, h = 0.5)
+clusters
+```
+```{r}
+plot(X2 ~ X1, data = geyser, pch = 16, asp = 1, col = clusters)
+```
+```{r}
+hc <- hclust(D, method = 'complete')
+plot(hc, hang=-1)
+```
+
+```{r}
+hc <- hclust(D, method = 'average')
+plot(hc, hang=-1)
+```
+```{r}
+clusters <- cutree(hc, k = 2)
+clusters
+```
+```{r}
+plot(X2 ~ X1, data = geyser, pch = 16, asp = 1, col = clusters)
+```

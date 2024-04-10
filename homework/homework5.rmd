@@ -1,0 +1,161 @@
+---
+title: "Multivariate Statistical Analysis"
+subtitle: "Homework 5"
+author: Lucas Fellmeth, Helen Kafka, Sven Bergmann
+date: 04/04/24
+output: pdf_document
+---
+
+```{r, echo = F}
+library(knitr)
+opts_chunk$set(tidy.opts = list(width.cutoff = 60), tidy = TRUE)
+```
+```{r, warning = F, message = F, error = F}
+library(nnet)
+library(caret)
+library("e1071")
+```
+```{r}
+set.seed(42)
+```
+# Problem 1
+
+The pendigit dataset contains digitalized handwritten digits.
+
+```{r}
+pendigit <- read.csv(file = '../Data_csv/pendigits.csv')
+pendigit$digit <- factor(pendigit$digit)
+```
+
+The variables $x1, y1, \ldots, x8, y8$ are the coordinates of a pen on a writing pad at eight different time points (so, if you want to visualize the written digit, you have to do ``plot(c(x1,...,x8),c(y1,...,y8),type='l'``.
+The variable digit identifies the digit that was written.
+The goal is to construct a classifier that will identify the handwritten digits as accurately as possible.
+Split the data into training and test sets (roughly an 80/20 split).
+
+```{r}
+i_test_pendigit <- sample(seq_along(pendigit[, 1]), size = length(pendigit[, 1]) * 0.2)
+pendigit_test <- pendigit[i_test_pendigit,]
+pendigit_train <- pendigit[-i_test_pendigit,]
+```
+
+Fit single-layer neural networks to the training data, with one, two and three hidden nodes (or more if necessary).
+
+```{r}
+num_hidden_nodes_pendigit <- 10
+nnets_pendigit <- vector(mode = 'list', length = num_hidden_nodes_pendigit)
+for (i in 1:num_hidden_nodes_pendigit) {
+  nnets_pendigit[[i]] <- nnet(digit ~ . - digit, data = pendigit_train, size = i, trace = F)
+}
+```
+
+Compute the respective misclassification rates on the test set.
+
+```{r}
+cms_pendigit <- vector(mode = 'list', length = num_hidden_nodes_pendigit)
+mscrs_pendigit <- list()
+for (i in 1:num_hidden_nodes_pendigit) {
+  predictions <- factor(predict(nnets_pendigit[[i]], newdata = pendigit_test, type = 'class'), levels = levels(pendigit_test$digit))
+  cms_pendigit[[i]] <- confusionMatrix(predictions, pendigit_test$digit)
+  mscrs_pendigit[i] <- 1 - cms_pendigit[[i]]$overall["Accuracy"]
+}
+```
+
+What's the lowest misclassification rate attained?
+
+```{r}
+for (i in 1:num_hidden_nodes_pendigit) {
+  cat('Misclassification rate for', i, 'hidden nodes:', mscrs_pendigit[[i]], '\n')
+}
+```
+
+```{r}
+min_mscrs_pendigit <- which.min(mscrs_pendigit)
+cat('The lowest misclassificationrate is on the neural network \n with', min_mscrs_pendigit, 'hidden nodes and a rate of', mscrs_pendigit[[min_mscrs_pendigit]], '.')
+```
+```{r}
+print(cms_pendigit[[min_mscrs_pendigit]])
+```
+
+From the cross-classification tables, which digits have the largest misclassification rates?
+
+```{r}
+mscrs_digits_best <- vector(mode = 'list', length = num_hidden_nodes_pendigit)
+for (i in 1:num_hidden_nodes_pendigit) {
+  mscrs_digits_best[[i]] <- 1 - (cms_pendigit[[min_mscrs_pendigit]]$table[i, i] / sum(cms_pendigit[[min_mscrs_pendigit]]$table[, i]))
+}
+cat('Misclassification rates for the digits of the set with ', min_mscrs_pendigit, '\n hidden nodes with the lowest overall rate:\n')
+for (i in 1:num_hidden_nodes_pendigit) {
+  cat('Misclassification rate of digit ', i - 1, ':', mscrs_digits_best[[i]], '\n')
+}
+cat('We have the largest misclassification rate at digit', which.max(mscrs_digits_best) - 1, '.')
+```
+
+# Problem 2
+
+The spambase dataset contains data for 4,601 emails which are classified as spam or not spam (as indicated by the variable class);
+
+```{r}
+spambase <- read.csv(file = '../Data_csv/spambase.csv')
+spambase$class <- factor(spambase$class)
+```
+
+58 feature variables are measured on each email.
+A more detailed description of the data is given on p. 259 of the book.
+Split the data into training and test sets (roughly an 80/20 split).
+
+```{r}
+i_test_spambase <- sample(seq_along(spambase[, 1]), size = length(spambase[, 1]) * 0.2)
+spambase_test <- spambase[i_test_spambase,]
+spambase_train <- spambase[-i_test_spambase,]
+```
+
+Fit a linear support vector machine classifier to the training data, starting with a very large ("infinite") cost, in the event the groups are separable, and progressively lowering the cost if they aren't.
+
+We omitted the following code with ``cost=Inf`` because there was an error message:
+"Error in svm.default(x, y, scale = scale, ..., na.action = na.action): NA/NaN/Inf in foreign function call (arg 12)"
+
+```{r}
+# svmfit_inf_spambase <- svm(class ~ . - class, data = spambase_train, cost = Inf, kernel = 'linear')
+# summary(svmfit_inf_spambase)
+```
+
+```{r}
+num_iterations_spambase <- 10
+svmfits_spambase <- vector(mode = 'list', length = num_iterations_spambase)
+# svmfits_spambase[[num_iterations_spambase + 1]] <- svmfit_inf_spambase
+for (i in num_iterations_spambase:1) {
+  svmfits_spambase[[i]] <- svm(class ~ . - class, data = spambase_train, cost = 10^i)
+}
+```
+
+Compute the respective misclassification rates on the test set.
+
+```{r}
+cms_spambase <- vector(mode = 'list', length = num_iterations_spambase)
+mscrs_spambase <- vector(mode = 'numeric', length = num_iterations_spambase)
+for (i in 1:num_iterations_spambase) {
+  predictions <- factor(predict(svmfits_spambase[[i]],
+                                newdata = spambase_test, type = 'class'),
+                        levels = levels(spambase_test$class))
+  cms_spambase[[i]] <- confusionMatrix(predictions, spambase_test$class)
+  mscrs_spambase[[i]] <- 1 - cms_spambase[[i]]$overall["Accuracy"]
+}
+```
+
+```{r}
+for (i in 1:num_iterations_spambase) {
+  cat('Misclassification rate for a svm with the cost', 10^i, 'is:', mscrs_spambase[[i]], '\n')
+}
+```
+
+What's the lowest misclassification rate attained?
+
+```{r}
+min_idx <- max(which(mscrs_spambase == min(mscrs_spambase)))
+# we used the above code to get the index with the minimum missclassification rate
+# but with the highest cost
+cat('The lowest misclassificationrate is on the svm \n with a cost of', 10^min_idx, 'and a rate of', mscrs_spambase[[min_idx]], '.')
+```
+```{r}
+print(cms_spambase[[min_idx]])
+```
