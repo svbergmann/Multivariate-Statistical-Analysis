@@ -52,11 +52,11 @@ Compute the respective misclassification rates on the test set.
 
 ```{r}
 cms_pendigit <- vector(mode = 'list', length = num_hidden_nodes_pendigit)
-mscrs_pendigit <- vector(mode = 'list', length = num_hidden_nodes_pendigit)
+mscrs_pendigit <- list()
 for (i in 1:num_hidden_nodes_pendigit) {
   predictions <- factor(predict(nnets_pendigit[[i]], newdata = pendigit_test, type = 'class'), levels = levels(pendigit_test$digit))
   cms_pendigit[[i]] <- confusionMatrix(predictions, pendigit_test$digit)
-  mscrs_pendigit[[i]] <- 1 - cms_pendigit[[i]]$overall["Accuracy"]
+  mscrs_pendigit[i] <- 1 - cms_pendigit[[i]]$overall["Accuracy"]
 }
 ```
 
@@ -87,7 +87,7 @@ cat('Misclassification rates for the digits of the set with ', min_mscrs_pendigi
 for (i in 1:num_hidden_nodes_pendigit) {
   cat('Misclassification rate of digit ', i - 1, ':', mscrs_digits_best[[i]], '\n')
 }
-cat('We have the largest misclassification rate at digit', which.max(mscrs_digits_best) - 1,'.')
+cat('We have the largest misclassification rate at digit', which.max(mscrs_digits_best) - 1, '.')
 ```
 
 # Problem 2
@@ -132,7 +132,7 @@ Compute the respective misclassification rates on the test set.
 
 ```{r}
 cms_spambase <- vector(mode = 'list', length = num_iterations_spambase)
-mscrs_spambase <- vector(mode = 'list', length = num_iterations_spambase)
+mscrs_spambase <- vector(mode = 'numeric', length = num_iterations_spambase)
 for (i in 1:num_iterations_spambase) {
   predictions <- factor(predict(svmfits_spambase[[i]],
                                 newdata = spambase_test, type = 'class'),
@@ -151,8 +151,11 @@ for (i in 1:num_iterations_spambase) {
 What's the lowest misclassification rate attained?
 
 ```{r}
-cat('The lowest misclassificationrate is on the svm \n with a cost of', 10^which.min(mscrs_spambase), 'and a rate of', mscrs_spambase[[which.min(mscrs_spambase)]], '.')
+min_idx <- max(which(mscrs_spambase == min(mscrs_spambase)))
+# we used the above code to get the index with the minimum missclassification rate
+# but with the highest cost
+cat('The lowest misclassificationrate is on the svm \n with a cost of', 10^min_idx, 'and a rate of', mscrs_spambase[[min_idx]], '.')
 ```
 ```{r}
-print(cms_spambase[[which.min(mscrs_spambase)]])
+print(cms_spambase[[min_idx]])
 ```
