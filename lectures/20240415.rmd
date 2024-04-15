@@ -1,0 +1,99 @@
+---
+title: "MthStat 768"
+date: April 15, 2024
+output: pdf_document
+---
+
+```{r, echo = F}
+library(knitr)
+opts_chunk$set(tidy.opts = list(width.cutoff = 60), tidy = TRUE)
+```
+
+```{r}
+set.seed(10)
+```
+
+# Geyser
+
+```{r}
+geyser <- read.csv(file = 'Data_csv/OldFaithfulGeyser.csv')
+plot(X2 ~ X1, data = geyser, pch = 16)
+```
+```{r}
+geyser <- scale(geyser)
+plot(X2 ~ X1, data = geyser, pch = 16, asp = 1)
+```
+```{r}
+D <- dist(geyser)
+```
+```{r}
+hc <- hclust(D, method = 'average')
+plot(hc)
+```
+```{r}
+plot(hc, hang = -1)
+```
+```{r}
+clusters <- cutree(hc, k = 2)
+clusters
+```
+
+```{r}
+plot(X2 ~ X1, data = geyser, pch = 16, asp = 1, col = clusters)
+```
+```{r}
+library(cluster)
+```
+```{r}
+plot(silhouette(clusters, dist = D))
+```
+
+- For the two clusters obtained by average linkage,
+the mean silhouette values are 0.71 for each cluster.
+- So the clusters are solid.
+
+# Iris data
+
+```{r}
+iris <- read.csv(file = './Data_csv/Iris.csv')
+```
+```{r}
+iris$class <- factor(iris$class)
+iris[, 1:4] <- scale(iris[, 1:4])
+D <- dist(iris[, 1:4])
+```
+```{r}
+hc <- hclust(d = D, method = 'average')
+plot(hc, hang = -1)
+```
+```{r}
+hc <- hclust(d = D, method = 'complete')
+plot(hc, hang = -1)
+```
+
+- For complete linkage, the dendrogram suggests a 3 cluster solution.
+
+```{r}
+clusters <- cutree(hc, k = 3)
+plot(silhouette(clusters, dist = D))
+```
+
+- the average silhouette value is 0.45 so the clustering is not very strong ("weak structure").
+
+If we cross-tabulate the points by cluster and species we get:
+
+```{r}
+table(clusters, iris$class)
+```
+
+- Setosa can be clearly identified with cluster 1.
+- For the other two clusters and species there is no one to one correspondence.
+- But we can say that cluster 2 contains mostly Versicolor, and Virginica mostly goes to cluster 3.
+
+```{r}
+km <- kmeans(x = iris[, 1:4], centers = 3, nstart = 20)
+table(km$cluster, iris$class)
+```
+```{r}
+plot(silhouette(km$cluster, dist = dist(iris[, 1:4])))
+```
