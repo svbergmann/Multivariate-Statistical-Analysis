@@ -1,0 +1,40 @@
+---
+title: "Multivariate Statistical Analysis"
+subtitle: "Homework 6"
+author: Lucas Fellmeth, Helen Kafka, Sven Bergmann
+date: 04/17/24
+output: pdf_document
+---
+
+```{r, echo = F}
+library(knitr)
+opts_chunk$set(tidy.opts = list(width.cutoff = 60), tidy = TRUE)
+```
+```{r, warning = F, message = F, error = F}
+
+```
+```{r}
+set.seed(42)
+```
+# Problem 1
+
+## a)
+
+Carry out a hierarchical agglomerative cluster analysis of the ``primate_scapulae`` data using complete linkage.
+Use the variables AD.BD, AD.CD, EA.CD, Dx.CD, SH.ACR, EAD and $\beta$ only.
+(Remember to scale the variables prior to clustering.)
+Does the dendrogram suggest a definite number of clusters as the best solution?
+If not, what would be reasonable solutions?
+
+```{r}
+primate_sculpae <- read.csv(file = 'Data_csv/primate_scapulae.csv')
+```
+
+## b)
+
+Decide on a reasonable solution in part (a) and assess that solution using a silhouette plot.
+
+## c)
+
+Is there any correspondence between the clusters obtained above
+and the primate species as indicated by the variable class?
