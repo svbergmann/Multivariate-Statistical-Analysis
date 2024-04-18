@@ -60,8 +60,8 @@ and the primate species as indicated by the variable class?
 table(clusters, primate_sculpae$class)
 ```
 
-- Cluster 1 has almost all values of the group "Hylobates".
-- Cluster 2 is kind of an intermediate cluster, no group really belongs there.
-- Cluster 3 has all of the group "Pongo".
-- Cluster 4 has two groups, "Gorillas", as well as "Pan".
-- Cluster 5 belongs to the group "Homo".
+- Cluster 1 has almost all values of the group "Hylobates" and also just values of this group.
+- Cluster 2 is kind of an intermediate cluster, no group really belongs there. Some values of the groups "Homo", "Hylobates" and "Pongo" are in there.
+- Cluster 3 has most of the group "Pongo" but also one value of the group "Homo".
+- Cluster 4 has two groups, "Gorillas" as well as "Pan".
+- Cluster 5 fully belongs to the group "Homo".
