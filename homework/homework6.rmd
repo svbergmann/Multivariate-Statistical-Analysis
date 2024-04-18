@@ -10,12 +10,6 @@ output: pdf_document
 library(knitr)
 opts_chunk$set(tidy.opts = list(width.cutoff = 60), tidy = TRUE)
 ```
-```{r, warning = F, message = F, error = F}
-
-```
-```{r}
-set.seed(42)
-```
 # Problem 1
 
 ## a)
@@ -27,14 +21,47 @@ Does the dendrogram suggest a definite number of clusters as the best solution?
 If not, what would be reasonable solutions?
 
 ```{r}
-primate_sculpae <- read.csv(file = 'Data_csv/primate_scapulae.csv')
+primate_sculpae <- read.csv(file = '../Data_csv/primate_scapulae.csv')
 ```
+```{r}
+primate_sculpae$class <- factor(primate_sculpae$class)
+primate_sculpae <- subset(primate_sculpae, select = c(AD.BD, AD.CD, EA.CD, Dx.CD, SH.ACR, EAD, beta, class))
+primate_sculpae[, 1:7] <- scale(primate_sculpae[, 1:7])
+head(primate_sculpae)
+```
+
+```{r}
+D <- dist(primate_sculpae[, 1:7])
+hc <- hclust(D, method = 'complete')
+plot(hc, hang = -1)
+```
+
+The dendrogram does not suggest a definite number of clusters as best solution,
+instead, we would probably cut off at ``height = 5`` (k = 5 clusters)
+because it seems that the 5 clusters survive the longest.
 
 ## b)
 
 Decide on a reasonable solution in part (a) and assess that solution using a silhouette plot.
 
+```{r}
+clusters <- cutree(hc, k = 5)
+plot(cluster::silhouette(clusters, dist = D))
+```
+
+The average silhouette width is 0.37 which is not too good.
+
 ## c)
 
 Is there any correspondence between the clusters obtained above
 and the primate species as indicated by the variable class?
+
+```{r}
+table(clusters, primate_sculpae$class)
+```
+
+- Cluster 1 has almost all values of the group "Hylobates".
+- Cluster 2 is kind of an intermediate cluster, no group really belongs there.
+- Cluster 3 has all of the group "Pongo".
+- Cluster 4 has two groups, "Gorillas", as well as "Pan".
+- Cluster 5 belongs to the group "Homo".
