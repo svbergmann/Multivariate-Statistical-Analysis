@@ -1,0 +1,67 @@
+---
+title: "MthStat 768"
+date: April 22, 2024
+output: pdf_document
+---
+
+```{r, echo = F}
+library(knitr)
+opts_chunk$set(tidy.opts = list(width.cutoff = 60), tidy = TRUE)
+```
+
+```{r}
+set.seed(10)
+```
+
+# Morse
+
+```{r}
+morse <- read.csv(file = 'Data_csv/Morse_code.csv')
+morse <- as.matrix(morse)
+rownames(morse) <- colnames(morse)
+```
+```{r}
+D <- diag(1 / sqrt(diag(morse))) %*%
+  morse %*%
+  diag(1 / sqrt(diag(morse)))
+D <- (D + t(D)) / 2
+D <- 1 - D
+rownames(D) <- rownames(morse)
+colnames(D) <- colnames(morse)
+```
+```{r}
+mdsfit <- cmdscale(d = D, k = 2, eig = T)
+y <- mdsfit$points
+```
+```{r}
+plot(1:36, mdsfit$eig, type = 'b')
+abline(h = 0)
+```
+```{r}
+plot(y[, 1], y[, 2], pch = 16)
+```
+```{r}
+plot(y[, 1], y[, 2], type = 'n')
+text(y[, 1], y[, 2], labels = rownames(D))
+```
+
+# Distance scaling
+
+```{r}
+colors <- read.csv('Data_csv/color_stimuli.csv')
+colors <- as.matrix(colors)
+rownames(colors) <- colnames(colors)
+D <- 1 - colors # dissimilarity matrix
+D <- (D + t(D)) / 2
+```
+```{r}
+library(MASS)
+```
+```{r}
+sammonfit <- sammon(d = D, k = 2)
+y <- sammonfit$points
+```
+```{r}
+plot(y[, 1], y[, 2], type = 'n', asp=1)
+text(y[, 1], y[, 2], labels = rownames(D))
+```
