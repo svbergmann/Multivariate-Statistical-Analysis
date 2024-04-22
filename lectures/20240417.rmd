@@ -1,0 +1,34 @@
+---
+title: "MthStat 768"
+date: April 17, 2024
+output: pdf_document
+---
+
+```{r, echo = F}
+library(knitr)
+opts_chunk$set(tidy.opts = list(width.cutoff = 60), tidy = TRUE)
+```
+
+```{r}
+set.seed(10)
+```
+
+# Morse
+
+```{r}
+morse <- read.csv(file = 'Data_csv/Morse_code.csv')
+morse <- as.matrix(morse)
+rownames(morse) <- colnames(morse)
+```
+```{r}
+D <- diag(1 / sqrt(diag(morse))) %*%
+  morse %*%
+  diag(1 / sqrt(diag(morse)))
+D <- (D + t(D)) / 2
+D <- 1 - D
+```
+```{r}
+mds <- cmdscale(d = D, k = 2, eig = T)
+plot(1:36, mds$eig)
+abline(h = 0)
+```
