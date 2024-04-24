@@ -1,0 +1,90 @@
+---
+title: "MthStat 768"
+date: April 24, 2024
+output: pdf_document
+---
+
+```{r, echo = F}
+library(knitr)
+opts_chunk$set(tidy.opts = list(width.cutoff = 60), tidy = TRUE)
+```
+
+```{r}
+set.seed(10)
+```
+
+# Daisy
+
+```{r}
+daisy <- read.csv(file = 'Data_csv/daisy_pregnant_ecg.csv')
+```
+```{r}
+plot(Channel_1 ~ time, data = daisy, type = 'l')
+```
+```{r}
+plot(Channel_2 ~ time, data = daisy, type = 'l')
+```
+
+```{r}
+library(fastICA)
+```
+
+```{r}
+x <- daisy[, 2:9]
+icafit <- fastICA(x, n.comp = 8, fun = 'logcosh')
+```
+```{r}
+plot(daisy$time, icafit$S[, 1], type = 'l')
+```
+
+# Simulated data
+
+```{r}
+t <- seq(0, 2, length.out = 500)
+S1 <- sin(pi * t)
+S2 <- sin(3 * pi * t)
+```
+```{r}
+plot(t, S1, col = 'red')
+points(t, S2, col = 'blue')
+```
+```{r}
+X1 <- 0.8 * S1 + 0.2 * S2
+```
+```{r}
+plot(t, X1)
+```
+```{r}
+X2 <- 0.2 * S1 + 0.8 * S2
+```
+```{r}
+plot(t, X2)
+```
+```{r}
+X <- cbind(X1, X2)
+```
+```{r}
+icafit <- fastICA(X, n.comp = 2, fun = 'logcosh')
+```
+```{r}
+plot(t, icafit$S[, 1])
+```
+```{r}
+plot(t, icafit$S[, 2])
+```
+
+- Using fun='exp' gives a close estimate
+
+```{r}
+S3 <- rnorm(500, sd = .05)
+X1 <- 0.8 * S1 + 0.2 * S2 + S3
+X2 <- 0.2 * S1 + 0.8 * S2 + S3
+X3 <- S1 + S2 + S3
+X <- cbind(X1, X2, X3)
+icafit <- fastICA(X, n.comp = 3)
+```
+```{r}
+plot(t, icafit$S[, 1])
+plot(t, icafit$S[, 2])
+plot(t, icafit$S[, 3])
+```
