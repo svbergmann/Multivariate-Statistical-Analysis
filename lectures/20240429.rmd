@@ -1,0 +1,28 @@
+---
+title: "MthStat 768"
+date: April 29, 2024
+output: pdf_document
+---
+
+```{r, echo = F}
+library(knitr)
+opts_chunk$set(tidy.opts = list(width.cutoff = 60), tidy = TRUE)
+```
+
+```{r}
+set.seed(10)
+```
+```{r}
+tests <- read.csv(file = 'Data_csv/24psychtestsPasteur.csv')
+tests <- tests[, -(1:2)]
+```
+```{r}
+faout <- factanal(x = tests, factors = 4, scores = 'regression', rotation = 'varimax')
+```
+```{r}
+A <- faout$loadings
+A
+```
+```{r}
+faout$scores[10,]
+```
