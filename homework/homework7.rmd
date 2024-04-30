@@ -1,0 +1,59 @@
+---
+title: "Multivariate Statistical Analysis"
+subtitle: "Homework 7"
+author: Lucas Fellmeth, Helen Kafka, Sven Bergmann
+date: 04/30/24
+output: pdf_document
+---
+
+```{r, echo = F}
+library(knitr)
+opts_chunk$set(tidy.opts = list(width.cutoff = 60), tidy = TRUE)
+```
+# Problem 1
+
+The ``British_towns`` dataset contains distances between 48 British towns.
+
+```{r}
+towns <- read.csv(file = 'Data_csv/British_towns.csv')
+```
+
+## a)
+
+Carry out a metric multidimensional scaling.
+From a plot of the eigenvalues,
+does a two-dimensional solution appear reasonable?
+
+
+## b)
+
+Plot the two-dimensional solution (as a 2D scatterplot) labeling each point by town name.
+Compare with a map of England.
+Do they look similar?
+
+
+# Problem 2
+
+Consider the zoo dataset,
+where 17 variables are observed on 101 animals.
+Excluding the variable ``type``, the other 16 variables are categorical:
+most of them are yes/no indicators,
+and ``legs`` can be seen as a categorical variable too.
+So, the dissimilarity between animals i and j can be defined as the number of characteristics in which they differ:
+$\delta_{ij} = \#\{f : x_{ik} \neq x_{jk}\}$.
+In ``R`` you can do this as follows:
+``D <- matrix(nrow=101,ncol=101)
+for (i in 1:101){ for (j in 1:101){ D[i,j] <- sum(x[i,]!=x[j,]) }}``
+
+```{r}
+zoo <- read.csv(file = 'Data_csv/zoo.csv')
+```
+
+## a)
+
+Carry out a two-dimensional multidimensional scaling.
+Plot the resulting configuration using animal names as labels.
+
+## b)
+
+Try to find, if possible, an interpretation for the coordinates, in terms of anatomical or physiological characteristics of the animals.
