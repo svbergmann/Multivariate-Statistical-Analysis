@@ -44,8 +44,8 @@ Answer: I think so.
 Plot the two-dimensional solution (as a 2D scatterplot) labeling each point by town name.
 
 ```{r}
-plot(y[, 1],y[, 2], type = 'n')
-text(y[, 1],y[, 2], labels = rownames(towns), cex = 0.5)
+plot(y[, 1], y[, 2], type = 'n')
+text(y[, 1], y[, 2], labels = rownames(towns), cex = 0.5)
 ```
 
 Compare with a map of England.
@@ -82,7 +82,18 @@ for (i in 1:101) { for (j in 1:101) { D_zoo[i, j] <- sum(zoo[i,] != zoo[j,]) } }
 ## a)
 
 Carry out a two-dimensional multidimensional scaling.
+
+```{r}
+mdsfit <- cmdscale(d = D_zoo, k = 2, eig = T)
+y_zoo <- mdsfit$points
+```
+
 Plot the resulting configuration using animal names as labels.
+
+```{r}
+plot(y_zoo[, 1], y_zoo[, 2], type = 'n')
+text(y_zoo[, 1], y_zoo[, 2], labels = zoo$Name, cex = 0.5)
+```
 
 ## b)
 
