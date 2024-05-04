@@ -15,7 +15,7 @@ opts_chunk$set(tidy.opts = list(width.cutoff = 60), tidy = TRUE)
 The ``British_towns`` dataset contains distances between 48 British towns.
 
 ```{r}
-towns <- read.csv(file = 'Data_csv/British_towns.csv')
+towns <- read.csv(file = '../Data_csv/British_towns.csv')
 towns <- subset(towns, select = -V1)
 towns <- as.matrix(towns)
 rownames(towns) <- colnames(towns)
@@ -44,13 +44,18 @@ Answer: I think so.
 Plot the two-dimensional solution (as a 2D scatterplot) labeling each point by town name.
 
 ```{r}
-plot(y[, 1], y[, 2], type = 'n')
-text(y[, 1], y[, 2], labels = rownames(D))
+plot(y[, 1],y[, 2], type = 'n')
+text(y[, 1],y[, 2], labels = rownames(towns), cex = 0.5)
 ```
 
 Compare with a map of England.
 Do they look similar?
 
+```{r, echo=FALSE, fig.cap="Map of british towns", out.height = "30%"}
+knitr::include_graphics("british_towns.png")
+```
+
+This map is taken from "https://www.britain-visitor.com/images/content_images/british-isles-towns-large.gif".
 
 # Problem 2
 
@@ -60,13 +65,18 @@ Excluding the variable ``type``, the other 16 variables are categorical:
 most of them are yes/no indicators,
 and ``legs`` can be seen as a categorical variable too.
 So, the dissimilarity between animals i and j can be defined as the number of characteristics in which they differ:
-$\delta_{ ij } = \ #\{f : x_{ik} \neq x_{jk}\}$.
+$\delta_{ij} = \#\{f : x_{ik} \neq x_{jk}\}$.
 In ``R`` you can do this as follows:
 ``D <- matrix(nrow=101, ncol=101)
 for (i in 1:101){ for (j in 1:101){ D[i, j] <- sum(x[i,]!=x[j,]) } }``
 
-```{ r }
-zoo <- read.csv(file = 'Data_csv/zoo.csv')
+```{r}
+zoo <- read.csv(file = '../Data_csv/zoo.csv')
+```
+
+```{r}
+D_zoo <- matrix(nrow = 101, ncol = 101)
+for (i in 1:101) { for (j in 1:101) { D_zoo[i, j] <- sum(zoo[i,] != zoo[j,]) } }
 ```
 
 ## a)
