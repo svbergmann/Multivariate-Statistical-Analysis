@@ -34,10 +34,13 @@ From a plot of the eigenvalues,
 does a two-dimensional solution appear reasonable?
 
 ```{r}
-plot(seq_along(towns[, 1]), mdsfit$eig, type = 'b')
+plot(seq_along(towns[-(1:28), 1]), mdsfit$eig[-(1:28)], type = 'b')
 abline(h = 0)
 ```
 Answer: I think so.
+
+Not sure here:
+Half of the eigenvectors are below zero and almost all of those eigenvalues are very large negative values, indicating the approximation is not very good. Which is weird, since the map shows something else and a 2 dimensional solution should work for distances of towns.
 
 ## b)
 
@@ -56,6 +59,8 @@ knitr::include_graphics("british_towns.png")
 ```
 
 This map is taken from "https://www.britain-visitor.com/images/content_images/british-isles-towns-large.gif".
+
+While not all towns from our datasets are visible on the map, the towns that are on the map are (relative to each other) in a similar place as they are in the plot, for example London, Bristol, Plymouth, Manchester and Carlisle. So, yes they do look similar.
 
 # Problem 2
 
@@ -98,3 +103,12 @@ text(y_zoo[, 1], y_zoo[, 2], labels = zoo$Name, cex = 0.5)
 ## b)
 
 Try to find, if possible, an interpretation for the coordinates, in terms of anatomical or physiological characteristics of the animals.
+
+The bottom right cluster mostly contains animals with wings.
+The two smaller clusters on the top right contain seas animals.
+The middle cluster contains reptiles
+The left cluster contains mammals.
+
+y seems to be variable describing the aquatic level of the animals, high values correspond to aquatic animals, low values correspond to land animals
+x seems to be variable describing the presence of wings, high values correspond to airborne animals and low values to ground animals.
+
