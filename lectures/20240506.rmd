@@ -1,0 +1,37 @@
+---
+title: "MthStat 768"
+date: May 06, 2024
+output: pdf_document
+---
+
+```{r, echo = F}
+library(knitr)
+opts_chunk$set(tidy.opts = list(width.cutoff = 60), tidy = TRUE)
+```
+
+```{r}
+set.seed(10)
+```
+
+```{r}
+iris <- read.csv(file = 'Data_csv/Iris.csv')
+iris$class <- factor(iris$class)
+iris[, 1:4] <- scale(iris[, 1:4])
+pcout <- princomp(~. - class, data = iris)
+```
+```{r}
+plot(pcout$scores[, 1], pcout$scores[, 2], pch = 16, col = as.numeric(iris$class))
+```
+
+```{r}
+library(kernlab)
+```
+```{r}
+kpcout <- kpca(~. - class, data = iris, kernel = 'rbfdot', kpar = list(sigma = 1), features = 2)
+plot(rotated(kpcout)[, 1], rotated(kpcout)[, 2], pch = 16, col = as.numeric(iris$class))
+```
+
+```{r}
+kpcout <- kpca(~. - class, data = iris, kernel = 'rbfdot', kpar = list(sigma = 0.1), features = 2)
+plot(rotated(kpcout)[, 1], rotated(kpcout)[, 2], pch = 16, col = as.numeric(iris$class))
+```
