@@ -1,0 +1,18 @@
+---
+title: "MthStat 768"
+date: May 08, 2024
+output: pdf_document
+---
+
+```{r, echo = F}
+library(knitr)
+opts_chunk$set(tidy.opts = list(width.cutoff = 60), tidy = TRUE)
+```
+
+```{r}
+set.seed(10)
+```
+
+```{r}
+shop <- read.csv(file = 'Data_csv/shoplifting.csv')
+```
