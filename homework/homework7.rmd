@@ -104,9 +104,9 @@ Try to find, if possible, an interpretation for the coordinates, in terms of ana
 Answer:
 The bottom right cluster mostly contains animals with wings.
 The two smaller clusters on the top right contain seas animals.
-The middle cluster contains reptiles
+The middle cluster contains reptiles.
 The left cluster contains mammals.
 
-y seems to be variable describing the aquatic level of the animals, high values correspond to aquatic animals, low values correspond to land animals
+y seems to be variable describing the aquatic level of the animals, high values correspond to aquatic animals, low values correspond to land animals.
 x seems to be variable describing the presence of wings, high values correspond to airborne animals and low values to ground animals.
 
