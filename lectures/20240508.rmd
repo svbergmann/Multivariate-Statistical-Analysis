@@ -35,3 +35,10 @@ colSums(p_col)
 ```{r}
 chisq.test(shop)
 ```
+```{r}
+library(ca)
+```
+```{r}
+ca_out <- ca(shop)
+plot(ca_out)
+```
