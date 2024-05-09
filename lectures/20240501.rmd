@@ -1,0 +1,77 @@
+---
+title: "MthStat 768"
+date: May 01, 2024
+output: pdf_document
+---
+
+```{r, echo = F}
+library(knitr)
+opts_chunk$set(tidy.opts = list(width.cutoff = 60), tidy = TRUE)
+```
+
+```{r}
+set.seed(10)
+```
+```{r}
+t <- seq(0, 2 * pi, length.out = 50)
+f1 <- cos(t)
+f2 <- sin(t)
+plot(f1, f2, asp = 1)
+```
+
+```{r}
+f1 <- t * cos(t)
+f2 <- t * sin(t)
+plot(f1, f2, asp = 1)
+```
+
+```{r}
+f1 <- cos(t)
+f2 <- sin(t)
+e <- matrix(rnorm(n = 100, mean = 0, sd = .1), 50, 2)
+x <- cbind(f1, f2) + e
+plot(x[, 1], x[, 2], asp = 1)
+```
+
+```{r}
+library(splines)
+```
+```{r}
+t <- seq(0, 1, length.out = 100)
+B <- bs(t, knots = c(0.2, 0.6), degree = 1, intercept = T)
+```
+```{r}
+matplot(t, B, lty = 1, lwd = 2)
+```
+
+```{r}
+B <- bs(t, knots = c(0.2, 0.6), degree = 3, intercept = T)
+f <- B %*% c(0, 1, 2, -1, -5, 3)
+plot(t, f, type = 'l', lwd = 2)
+```
+
+```{r}
+t <- seq(0, .75, length.out = 50)
+f1 <- cos(2 * pi * t)
+f2 <- sin(2 * pi * t)
+e <- matrix(rnorm(n = 100, sd = 0.1), 50, 2)
+x <- cbind(f1, f2) + e
+plot(x[, 1], x[, 2], asp = 1)
+```
+
+```{r}
+library(princurve)
+```
+
+```{r}
+pcfit <- principal_curve(x, smoother = 'smooth_spline', plot_iterations = T)
+```
+
+```{r}
+pcfit$lambda
+```
+
+```{r}
+plot(f1, f2, asp = 1, col = 'blue', pch = 16)
+points(pcfit$s[, 1], pcfit$s[, 2], pch = 16, col = 'red', asp = 1)
+```

@@ -1,0 +1,44 @@
+---
+title: "MthStat 768"
+date: May 08, 2024
+output: pdf_document
+---
+
+```{r, echo = F}
+library(knitr)
+opts_chunk$set(tidy.opts = list(width.cutoff = 60), tidy = TRUE)
+```
+
+```{r}
+set.seed(10)
+```
+
+```{r}
+shop <- read.csv(file = 'Data_csv/shoplifting.csv')
+```
+```{r}
+shop <- shop[1:9,]
+shop <- as.matrix(shop)
+rownames(shop) <- paste0('A', 1:9)
+```
+```{r}
+margin.table(shop, margin = 2)
+```
+```{r}
+p_row <- prop.table(shop, margin = 1)
+rowSums(p_row)
+```
+```{r}
+p_col <- prop.table(shop, margin = 2)
+colSums(p_col)
+```
+```{r}
+chisq.test(shop)
+```
+```{r}
+library(ca)
+```
+```{r}
+ca_out <- ca(shop)
+plot(ca_out)
+```
