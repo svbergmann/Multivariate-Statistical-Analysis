@@ -1,0 +1,87 @@
+---
+title: "Multivariate Statistical Analysis"
+subtitle: "Final work"
+author: Lucas Fellmeth, Helen Kafka, Sven Bergmann
+date: 05/09/24
+output: pdf_document
+---
+
+```{r, echo = F}
+library(knitr)
+opts_chunk$set(tidy.opts = list(width.cutoff = 60), tidy = TRUE)
+```
+```{r, warning = F, message = F, error = F}
+library(nnet)
+library(caret)
+```
+# Problem 1
+
+Consider the ``vehicle`` dataset.
+```{r}
+vehicles <- read.csv(file = './Data_csv/vehicle.csv')
+vehicles <- subset(vehicles, select = -classdigit)
+vehicles$class <- factor(vehicles$class)
+```
+
+The goal is to identify 3D objects from 2D images captured by cameras at different angles.
+The objects in this case are four types of vehicles
+(identified by the variables ``class`` and ``classdigit``),
+and the other 18 numerical variables are measurements extracted from these 2D images.
+Split the data into training and test sets (80/20).
+
+```{r}
+i_test_vehicles <- sample(seq_along(vehicles[, 1]), size = length(vehicles[, 1]) * 0.2)
+vehicles_test <- vehicles[i_test_vehicles,]
+vehicles_train <- vehicles[-i_test_vehicles,]
+```
+
+On the training set compute:
+
+- a multinomial logistic classifier
+
+```{r}
+multinomial_logistic_classifier <- glm(formula = class ~ . - class, data = vehicles_train, family = binomial)
+```
+
+- a single-hidden-layer neural network classifier (with the number of hidden nodes to be determined)
+
+```{r}
+num_hidden_nodes_vehicles <- 20
+nnets_vehicles <- vector(mode = "list", length = num_hidden_nodes_vehicles)
+for (i in 1:num_hidden_nodes_vehicles) {
+  nnets_vehicles[[i]] <- nnet(class ~ . - class, data = vehicles_train, size = i, trace = F)
+}
+```
+
+On the test data,
+find the cross-classification tables and the misclassification rates.
+
+```{r}
+pi1_hat <- predict(multinomial_logistic_classifier, type = 'response', newdata = vehicles_test)
+gr_hat <- ifelse(pi1_hat > 0.5, 2, 1)
+mctable <- table(gr_hat, vehicles_test$class)
+mctable
+```
+```{r}
+1 - sum(diag(mctable)) / length(vehicles_test$class)
+```
+
+```{r}
+cms_vehicles <- vector(mode = 'list', length = num_hidden_nodes_vehicles)
+mscrs_vehicles <- list()
+for (i in 1:num_hidden_nodes_vehicles) {
+  predictions <- factor(predict(nnets_vehicles[[i]], newdata = vehicles_test, type = 'class'),
+                        levels = levels(vehicles_test$class))
+  cms_vehicles[[i]] <- confusionMatrix(predictions, vehicles_test$class)
+  mscrs_vehicles[i] <- 1 - cms_vehicles[[i]]$overall["Accuracy"]
+}
+```
+
+```{r}
+for (i in 1:num_hidden_nodes_vehicles) {
+  cat('Misclassification rate for', i, 'hidden nodes:', mscrs_vehicles[[i]], '\n')
+}
+```
+
+Which of the above methods is better?
+Is there any specific type of vehicle that is harder to classify than the others?
