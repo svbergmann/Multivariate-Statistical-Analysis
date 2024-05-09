@@ -94,3 +94,34 @@ cms_vehicles[[min_mscrs_vehicles]]
 
 Which of the above methods is better?
 Is there any specific type of vehicle that is harder to classify than the others?
+
+
+# Problem 2
+
+The ``pendigitss`` dataset consists of discretized handwritten digits
+(for a full description, see Section 7.2.10 in the book).
+From this set, extract the subset corresponding to digits 0, 6, 8 and 9,
+and scale the variables so that the variances are 1.
+
+```{r}
+pendigits <- read.csv(file = './Data_csv/pendigits.csv')
+pendigits$digit <- factor(pendigits$digit)
+pendigits <- pendigits[pendigits$digit %in% c(0, 6, 8, 9),]
+pendigits[, 2:17] <- scale(pendigits[, 2:17])
+```
+
+## (a)
+Compute ordinary principal components and draw a scatterplot of the first two component scores,
+using different colors (or symbols) for different digits.
+Are the digits well separated?
+
+```{r}
+pca_pendigits <- princomp(pendigits[, 2:ncol(pendigits)])
+plot(pca_pendigits$scores[, 1] ~ pca_pendigits$scores[, 2], col = pendigits$digit, pch = 16)
+```
+
+## (b)
+Compute kernel principal components using Gaussian kernels with various scales,
+and draw scatterplots of the first two component scores as in (a).
+Are the digits now better separated than in (a)?
+
