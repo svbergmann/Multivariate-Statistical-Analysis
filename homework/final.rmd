@@ -83,5 +83,14 @@ for (i in 1:num_hidden_nodes_vehicles) {
 }
 ```
 
+```{r}
+min_mscrs_vehicles <- which.min(mscrs_vehicles)
+cat('The lowest misclassificationrate is on the neural network \n with', min_mscrs_vehicles, 'hidden nodes and a rate of', mscrs_vehicles[[min_mscrs_vehicles]], '.')
+```
+
+```{r}
+cms_vehicles[[min_mscrs_vehicles]]
+```
+
 Which of the above methods is better?
 Is there any specific type of vehicle that is harder to classify than the others?
