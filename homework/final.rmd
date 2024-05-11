@@ -13,12 +13,15 @@ opts_chunk$set(tidy.opts = list(width.cutoff = 60), tidy = TRUE)
 ```{r, warning = F, message = F, error = F}
 library(nnet)
 library(caret)
+library(kernlab)
 ```
 # Problem 1
 
 Consider the ``vehicle`` dataset.
+
 ```{r}
 vehicles <- read.csv(file = './Data_csv/vehicle.csv')
+# take out the classdigit because we already have a class variable
 vehicles <- subset(vehicles, select = -classdigit)
 vehicles$class <- factor(vehicles$class)
 ```
@@ -30,6 +33,7 @@ and the other 18 numerical variables are measurements extracted from these 2D im
 Split the data into training and test sets (80/20).
 
 ```{r}
+set.seed(42)
 i_test_vehicles <- sample(seq_along(vehicles[, 1]), size = length(vehicles[, 1]) * 0.2)
 vehicles_test <- vehicles[i_test_vehicles,]
 vehicles_train <- vehicles[-i_test_vehicles,]
@@ -118,10 +122,18 @@ Are the digits well separated?
 ```{r}
 pca_pendigits <- princomp(pendigits[, 2:ncol(pendigits)])
 plot(pca_pendigits$scores[, 1] ~ pca_pendigits$scores[, 2], col = pendigits$digit, pch = 16)
+legend('topleft', col = 1:10, legend = paste('Number', 1:10), pch = 16, bty = 'n')
 ```
 
 ## (b)
 Compute kernel principal components using Gaussian kernels with various scales,
 and draw scatterplots of the first two component scores as in (a).
+
+```{r}
+kpca_pendigits <- kpca(~. - digit, data = pendigits, kernel = 'rbfdot', kpar = list(sigma = 1), features = 2)
+plot(rotated(kpca_pendigits)[, 1], rotated(kpca_pendigits)[, 2], pch = 16, col = as.numeric(pendigits$digit))
+legend('topleft', col = 1:10, legend = paste('Number', 1:10), pch = 16, bty = 'n')
+```
+
 Are the digits now better separated than in (a)?
 
