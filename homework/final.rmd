@@ -44,16 +44,17 @@ On the training set compute:
 - a multinomial logistic classifier
 
 ```{r}
-multinomial_logistic_classifier <- glm(formula = class ~ . - class, data = vehicles_train, family = binomial)
+vehicles_mlc <- glm(formula = class ~ . - class, data = vehicles_train, family = binomial)
+summary(vehicles_mlc)
 ```
 
 - a single-hidden-layer neural network classifier (with the number of hidden nodes to be determined)
 
 ```{r}
-num_hidden_nodes_vehicles <- 20
-nnets_vehicles <- vector(mode = "list", length = num_hidden_nodes_vehicles)
-for (i in 1:num_hidden_nodes_vehicles) {
-  nnets_vehicles[[i]] <- nnet(class ~ . - class, data = vehicles_train, size = i, trace = F)
+vehicles_num_hidden_nodes <- 20
+vehicles_nnets <- vector(mode = "list", length = vehicles_num_hidden_nodes)
+for (i in 1:vehicles_num_hidden_nodes) {
+  vehicles_nnets[[i]] <- nnet(class ~ . - class, data = vehicles_train, size = i, trace = F)
 }
 ```
 
@@ -61,39 +62,42 @@ On the test data,
 find the cross-classification tables and the misclassification rates.
 
 ```{r}
-pi1_hat <- predict(multinomial_logistic_classifier, type = 'response', newdata = vehicles_test)
-gr_hat <- ifelse(pi1_hat > 0.5, 2, 1)
-mctable <- table(gr_hat, vehicles_test$class)
-mctable
-```
-```{r}
-1 - sum(diag(mctable)) / length(vehicles_test$class)
+vehicles_mlc_pi1_hat <- predict(vehicles_mlc, vehicles_test, type = 'response')
+vehicles_mlc_gr_hat <- ifelse(vehicles_mlc_pi1_hat > 0.5, 2, 1)
+vehicles_mlc_mctable <- table(vehicles_mlc_gr_hat, vehicles_test$class)
+vehicles_mlc_mctable
 ```
 
 ```{r}
-cms_vehicles <- vector(mode = 'list', length = num_hidden_nodes_vehicles)
-mscrs_vehicles <- list()
-for (i in 1:num_hidden_nodes_vehicles) {
-  predictions <- factor(predict(nnets_vehicles[[i]], newdata = vehicles_test, type = 'class'),
-                        levels = levels(vehicles_test$class))
-  cms_vehicles[[i]] <- confusionMatrix(predictions, vehicles_test$class)
-  mscrs_vehicles[i] <- 1 - cms_vehicles[[i]]$overall["Accuracy"]
+1 - sum(diag(vehicles_mlc_mctable)) / length(vehicles_test$class)
+```
+
+```{r}
+vehicles_nnets_cms <- vector(mode = 'list', length = vehicles_num_hidden_nodes)
+vehicles_nnets_mscrs <- list()
+for (i in 1:vehicles_num_hidden_nodes) {
+  vehicles_nnets_cms[[i]] <- confusionMatrix(
+    factor(
+      predict(vehicles_nnets[[i]], newdata = vehicles_test, type = 'class'),
+      levels = levels(vehicles_test$class)),
+    vehicles_test$class)
+  vehicles_nnets_mscrs[i] <- 1 - vehicles_nnets_cms[[i]]$overall["Accuracy"]
 }
 ```
 
 ```{r}
-for (i in 1:num_hidden_nodes_vehicles) {
-  cat('Misclassification rate for', i, 'hidden nodes:', mscrs_vehicles[[i]], '\n')
+for (i in 1:vehicles_num_hidden_nodes) {
+  cat('Misclassification rate for', i, 'hidden nodes:', vehicles_nnets_mscrs[[i]], '\n')
 }
 ```
 
 ```{r}
-min_mscrs_vehicles <- which.min(mscrs_vehicles)
-cat('The lowest misclassificationrate is on the neural network \n with', min_mscrs_vehicles, 'hidden nodes and a rate of', mscrs_vehicles[[min_mscrs_vehicles]], '.')
+vehicles_nnets_min_mscrs <- which.min(vehicles_nnets_mscrs)
+cat('The lowest misclassificationrate is on the neural network \n with', vehicles_nnets_min_mscrs, 'hidden nodes and a rate of', vehicles_nnets_mscrs[[min_mscrs_vehicles]], '.')
 ```
 
 ```{r}
-cms_vehicles[[min_mscrs_vehicles]]
+vehicles_nnets_cms[[min_mscrs_vehicles]]
 ```
 
 Which of the above methods is better?
