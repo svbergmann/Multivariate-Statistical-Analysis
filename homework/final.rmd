@@ -18,18 +18,18 @@ library(kernlab)
 # Problem 1
 
 Consider the ``vehicle`` dataset.
-
-```{r}
-vehicles <- read.csv(file = './Data_csv/vehicle.csv')
-# take out the classdigit because we already have a class variable
-vehicles <- subset(vehicles, select = -classdigit)
-vehicles$class <- factor(vehicles$class)
-```
-
 The goal is to identify 3D objects from 2D images captured by cameras at different angles.
 The objects in this case are four types of vehicles
 (identified by the variables ``class`` and ``classdigit``),
 and the other 18 numerical variables are measurements extracted from these 2D images.
+
+```{r}
+vehicles <- read.csv(file = './Data_csv/vehicle.csv')
+# remove the classdigit because we already have a class variable
+vehicles <- subset(vehicles, select = -classdigit)
+vehicles$class <- factor(vehicles$class)
+```
+
 Split the data into training and test sets (80/20).
 
 ```{r}
