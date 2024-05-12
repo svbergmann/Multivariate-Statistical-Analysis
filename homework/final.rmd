@@ -8,7 +8,7 @@ output: pdf_document
 
 ```{r, echo = F}
 library(knitr)
-opts_chunk$set(tidy.opts = list(width.cutoff = 60), tidy = TRUE)
+opts_chunk$set(tidy.opts = list(width.cutoff = 80), tidy = TRUE)
 ```
 ```{r, warning = F, message = F, error = F}
 library(nnet)
@@ -24,7 +24,7 @@ The objects in this case are four types of vehicles
 and the other 18 numerical variables are measurements extracted from these 2D images.
 
 ```{r}
-vehicles <- read.csv(file = './Data_csv/vehicle.csv')
+vehicles <- read.csv(file = '../Data_csv/vehicle.csv')
 # remove the classdigit because we already have a class variable
 vehicles <- subset(vehicles, select = -classdigit)
 vehicles$class <- factor(vehicles$class)
@@ -34,17 +34,17 @@ Split the data into training and test sets (80/20).
 
 ```{r}
 set.seed(42)
-i_test_vehicles <- sample(seq_along(vehicles[, 1]), size = length(vehicles[, 1]) * 0.2)
-vehicles_test <- vehicles[i_test_vehicles,]
-vehicles_train <- vehicles[-i_test_vehicles,]
+inTrain_vehicles <- createDataPartition(vehicles$class, p = 0.8)[[1]]
+vehicles_train <- vehicles[inTrain_vehicles,]
+vehicles_test <- vehicles[-inTrain_vehicles,]
 ```
 
 On the training set compute:
 
 - a multinomial logistic classifier
 
-```{r}
-vehicles_mlc <- glm(formula = class ~ . - class, data = vehicles_train, family = binomial)
+```{r, warning = F}
+vehicles_mlc <- glm(formula = class ~ ., data = vehicles_train, family = binomial)
 summary(vehicles_mlc)
 ```
 
@@ -87,17 +87,25 @@ for (i in 1:vehicles_num_hidden_nodes) {
 
 ```{r}
 for (i in 1:vehicles_num_hidden_nodes) {
-  cat('Misclassification rate for', i, 'hidden nodes:', vehicles_nnets_mscrs[[i]], '\n')
+  cat('Misclassification rate for',
+      i,
+      'hidden nodes:',
+      vehicles_nnets_mscrs[[i]],
+      '\n')
 }
 ```
 
 ```{r}
 vehicles_nnets_min_mscrs <- which.min(vehicles_nnets_mscrs)
-cat('The lowest misclassificationrate is on the neural network \n with', vehicles_nnets_min_mscrs, 'hidden nodes and a rate of', vehicles_nnets_mscrs[[min_mscrs_vehicles]], '.')
+cat('The lowest misclassificationrate is on the neural network with',
+    vehicles_nnets_min_mscrs,
+    'hidden nodes and a rate of',
+    vehicles_nnets_mscrs[[vehicles_nnets_min_mscrs]],
+    '.')
 ```
 
 ```{r}
-vehicles_nnets_cms[[min_mscrs_vehicles]]
+vehicles_nnets_cms[[vehicles_nnets_min_mscrs]]
 ```
 
 Which of the above methods is better?
@@ -106,13 +114,13 @@ Is there any specific type of vehicle that is harder to classify than the others
 
 # Problem 2
 
-The ``pendigitss`` dataset consists of discretized handwritten digits
+The ``pendigits`` dataset consists of discretized handwritten digits
 (for a full description, see Section 7.2.10 in the book).
 From this set, extract the subset corresponding to digits 0, 6, 8 and 9,
 and scale the variables so that the variances are 1.
 
 ```{r}
-pendigits <- read.csv(file = './Data_csv/pendigits.csv')
+pendigits <- read.csv(file = '../Data_csv/pendigits.csv')
 pendigits$digit <- factor(pendigits$digit)
 pendigits <- pendigits[pendigits$digit %in% c(0, 6, 8, 9),]
 pendigits[, 2:17] <- scale(pendigits[, 2:17])
@@ -124,9 +132,9 @@ using different colors (or symbols) for different digits.
 Are the digits well separated?
 
 ```{r}
-pca_pendigits <- princomp(pendigits[, 2:ncol(pendigits)])
-plot(pca_pendigits$scores[, 1] ~ pca_pendigits$scores[, 2], col = pendigits$digit, pch = 16)
-legend('topleft', col = 1:10, legend = paste('Number', 1:10), pch = 16, bty = 'n')
+pendigits_pca <- princomp(~. - digit, data = pendigits)
+plot(pendigits_pca$scores[, 1] ~ pendigits_pca$scores[, 2], col = pendigits$digit, pch = 16)
+legend('topleft', col = 1:10, legend = paste(1:10), pch = 16, bty = 'n', cex = 0.5)
 ```
 
 ## (b)
@@ -134,9 +142,9 @@ Compute kernel principal components using Gaussian kernels with various scales,
 and draw scatterplots of the first two component scores as in (a).
 
 ```{r}
-kpca_pendigits <- kpca(~. - digit, data = pendigits, kernel = 'rbfdot', kpar = list(sigma = 1), features = 2)
-plot(rotated(kpca_pendigits)[, 1], rotated(kpca_pendigits)[, 2], pch = 16, col = as.numeric(pendigits$digit))
-legend('topleft', col = 1:10, legend = paste('Number', 1:10), pch = 16, bty = 'n')
+pendigits_kpca <- kpca(~. - digit, data = pendigits, kernel = 'rbfdot', kpar = list(sigma = 0.1), features = 2)
+plot(rotated(pendigits_kpca)[, 1], rotated(pendigits_kpca)[, 2], pch = 16, col = as.numeric(pendigits$digit))
+legend('bottomleft', col = 1:10, legend = paste(1:10), pch = 16, bty = 'n', cex = 0.5)
 ```
 
 Are the digits now better separated than in (a)?

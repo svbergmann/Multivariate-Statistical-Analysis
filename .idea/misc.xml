@@ -17,6 +17,7 @@
         <entry key="file://$PROJECT_DIR$/homework/final.rmd">
           <value>
             <RMarkdownRenderProfile>
+              <option name="lastOutput" value="$PROJECT_DIR$/homework/final.pdf" />
               <option name="outputDirectoryUrl" value="file://$PROJECT_DIR$/homework" />
             </RMarkdownRenderProfile>
           </value>
