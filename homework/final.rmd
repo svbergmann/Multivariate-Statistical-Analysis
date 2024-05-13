@@ -109,8 +109,16 @@ vehicles_nnets_cms[[vehicles_nnets_min_mscrs]]
 ```
 
 Which of the above methods is better?
+
+Answer: We would make the case,
+that a neural network performs better on this data because the misclassification error is lower with just 6 hidden nodes.
+Obviously, one needs to pay attention to the computing time / power.
+Neural networks are getting more expensive in computing with more hidden nodes.
+
 Is there any specific type of vehicle that is harder to classify than the others?
 
+We would say that the saab is difficult to distinguish from the opel.
+And overall, the saab may also be the hardest to classify.
 
 # Problem 2
 
@@ -124,6 +132,15 @@ pendigits <- read.csv(file = '../Data_csv/pendigits.csv')
 pendigits$digit <- factor(pendigits$digit)
 pendigits <- pendigits[pendigits$digit %in% c(0, 6, 8, 9),]
 pendigits[, 2:17] <- scale(pendigits[, 2:17])
+pendigits <- transform(pendigits,
+                       color = ifelse(digit == 0, 1,
+                                      ifelse(digit == 6, 2,
+                                             ifelse(digit == 8, 3,
+                                                    ifelse(digit == 9, 4, 0)
+                                             )
+                                      )
+                       )
+)
 ```
 
 ## (a)
@@ -132,9 +149,9 @@ using different colors (or symbols) for different digits.
 Are the digits well separated?
 
 ```{r}
-pendigits_pca <- princomp(~. - digit, data = pendigits)
-plot(pendigits_pca$scores[, 1] ~ pendigits_pca$scores[, 2], col = pendigits$digit, pch = 16)
-legend('topleft', col = 1:10, legend = paste(1:10), pch = 16, bty = 'n', cex = 0.5)
+pendigits_pca <- princomp(~. - digit - color, data = pendigits)
+plot(pendigits_pca$scores[, 1] ~ pendigits_pca$scores[, 2], col = pendigits$color, pch = 16)
+legend('topleft', col = 1:4, legend = paste('Number', 1:4), pch = 16, bty = 'n')
 ```
 
 ## (b)
@@ -143,9 +160,10 @@ and draw scatterplots of the first two component scores as in (a).
 
 ```{r}
 pendigits_kpca <- kpca(~. - digit, data = pendigits, kernel = 'rbfdot', kpar = list(sigma = 0.1), features = 2)
-plot(rotated(pendigits_kpca)[, 1], rotated(pendigits_kpca)[, 2], pch = 16, col = as.numeric(pendigits$digit))
-legend('bottomleft', col = 1:10, legend = paste(1:10), pch = 16, bty = 'n', cex = 0.5)
+plot(rotated(pendigits_kpca)[, 1], rotated(pendigits_kpca)[, 2], pch = 16, col = as.numeric(pendigits$color))
+legend('bottomleft', col = 1:4, legend = paste('Number', 1:4), pch = 16, bty = 'n')
 ```
 
 Are the digits now better separated than in (a)?
 
+Yes, we can see that there is a better separation of the digits now.
