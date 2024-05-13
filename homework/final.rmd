@@ -8,7 +8,7 @@ output: pdf_document
 
 ```{r, echo = F}
 library(knitr)
-opts_chunk$set(tidy.opts = list(width.cutoff = 80), tidy = TRUE)
+opts_chunk$set(tidy.opts = list(width.cutoff = 60), tidy = TRUE)
 ```
 ```{r, warning = F, message = F, error = F}
 library(nnet)
@@ -97,7 +97,7 @@ for (i in 1:vehicles_num_hidden_nodes) {
 
 ```{r}
 vehicles_nnets_min_mscrs <- which.min(vehicles_nnets_mscrs)
-cat('The lowest misclassificationrate is on the neural network with',
+cat('The lowest msr is on the neural network with',
     vehicles_nnets_min_mscrs,
     'hidden nodes and a rate of',
     vehicles_nnets_mscrs[[vehicles_nnets_min_mscrs]],
