@@ -151,7 +151,7 @@ Are the digits well separated?
 ```{r}
 pendigits_pca <- princomp(~. - digit - color, data = pendigits)
 plot(pendigits_pca$scores[, 1] ~ pendigits_pca$scores[, 2], col = pendigits$color, pch = 16)
-legend('topleft', col = 1:4, legend = paste('Number', 1:4), pch = 16, bty = 'n')
+legend('topleft', col = 1:4, legend = paste('Number', c(0, 6, 8, 9)), pch = 16, bty = 'n')
 ```
 
 ## (b)
@@ -161,7 +161,7 @@ and draw scatterplots of the first two component scores as in (a).
 ```{r}
 pendigits_kpca <- kpca(~. - digit, data = pendigits, kernel = 'rbfdot', kpar = list(sigma = 0.1), features = 2)
 plot(rotated(pendigits_kpca)[, 1], rotated(pendigits_kpca)[, 2], pch = 16, col = as.numeric(pendigits$color))
-legend('bottomleft', col = 1:4, legend = paste('Number', 1:4), pch = 16, bty = 'n')
+legend('bottomleft', col = 1:4, legend = paste('Number', c(0, 6, 8, 9)), pch = 16, bty = 'n')
 ```
 
 Are the digits now better separated than in (a)?
