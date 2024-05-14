@@ -159,7 +159,7 @@ Compute kernel principal components using Gaussian kernels with various scales,
 and draw scatterplots of the first two component scores as in (a).
 
 ```{r}
-pendigits_kpca <- kpca(~. - digit, data = pendigits, kernel = 'rbfdot', kpar = list(sigma = 0.1), features = 2)
+pendigits_kpca <- kpca(~. - digit -color, data = pendigits, kernel = 'rbfdot', kpar = list(sigma = 0.1), features = 2)
 plot(rotated(pendigits_kpca)[, 1], rotated(pendigits_kpca)[, 2], pch = 16, col = as.numeric(pendigits$color))
 legend('bottomleft', col = 1:4, legend = paste('Number', c(0, 6, 8, 9)), pch = 16, bty = 'n')
 ```
