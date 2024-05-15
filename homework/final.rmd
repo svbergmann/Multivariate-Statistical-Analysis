@@ -1,0 +1,169 @@
+---
+title: "Multivariate Statistical Analysis"
+subtitle: "Final work"
+author: Lucas Fellmeth, Helen Kafka, Sven Bergmann
+date: 05/09/24
+output: pdf_document
+---
+
+```{r, echo = F}
+library(knitr)
+opts_chunk$set(tidy.opts = list(width.cutoff = 60), tidy = TRUE)
+```
+```{r, warning = F, message = F, error = F}
+library(nnet)
+library(caret)
+library(kernlab)
+```
+# Problem 1
+
+Consider the ``vehicle`` dataset.
+The goal is to identify 3D objects from 2D images captured by cameras at different angles.
+The objects in this case are four types of vehicles
+(identified by the variables ``class`` and ``classdigit``),
+and the other 18 numerical variables are measurements extracted from these 2D images.
+
+```{r}
+vehicles <- read.csv(file = '../Data_csv/vehicle.csv')
+# remove the classdigit because we already have a class variable
+vehicles <- subset(vehicles, select = -classdigit)
+vehicles$class <- factor(vehicles$class)
+```
+
+Split the data into training and test sets (80/20).
+
+```{r}
+set.seed(42)
+inTrain_vehicles <- createDataPartition(vehicles$class, p = 0.8)[[1]]
+vehicles_train <- vehicles[inTrain_vehicles,]
+vehicles_test <- vehicles[-inTrain_vehicles,]
+```
+
+On the training set compute:
+
+- a multinomial logistic classifier
+
+```{r, warning = F}
+vehicles_mlc <- glm(formula = class ~ ., data = vehicles_train, family = binomial)
+summary(vehicles_mlc)
+```
+
+- a single-hidden-layer neural network classifier (with the number of hidden nodes to be determined)
+
+```{r}
+vehicles_num_hidden_nodes <- 20
+vehicles_nnets <- vector(mode = "list", length = vehicles_num_hidden_nodes)
+for (i in 1:vehicles_num_hidden_nodes) {
+  vehicles_nnets[[i]] <- nnet(class ~ . - class, data = vehicles_train, size = i, trace = F)
+}
+```
+
+On the test data,
+find the cross-classification tables and the misclassification rates.
+
+```{r}
+vehicles_mlc_pi1_hat <- predict(vehicles_mlc, vehicles_test, type = 'response')
+vehicles_mlc_gr_hat <- ifelse(vehicles_mlc_pi1_hat > 0.5, 2, 1)
+vehicles_mlc_mctable <- table(vehicles_mlc_gr_hat, vehicles_test$class)
+vehicles_mlc_mctable
+```
+
+```{r}
+1 - sum(diag(vehicles_mlc_mctable)) / length(vehicles_test$class)
+```
+
+```{r}
+vehicles_nnets_cms <- vector(mode = 'list', length = vehicles_num_hidden_nodes)
+vehicles_nnets_mscrs <- list()
+for (i in 1:vehicles_num_hidden_nodes) {
+  vehicles_nnets_cms[[i]] <- confusionMatrix(
+    factor(
+      predict(vehicles_nnets[[i]], newdata = vehicles_test, type = 'class'),
+      levels = levels(vehicles_test$class)),
+    vehicles_test$class)
+  vehicles_nnets_mscrs[i] <- 1 - vehicles_nnets_cms[[i]]$overall["Accuracy"]
+}
+```
+
+```{r}
+for (i in 1:vehicles_num_hidden_nodes) {
+  cat('Misclassification rate for',
+      i,
+      'hidden nodes:',
+      vehicles_nnets_mscrs[[i]],
+      '\n')
+}
+```
+
+```{r}
+vehicles_nnets_min_mscrs <- which.min(vehicles_nnets_mscrs)
+cat('The lowest msr is on the neural network with',
+    vehicles_nnets_min_mscrs,
+    'hidden nodes and a rate of',
+    vehicles_nnets_mscrs[[vehicles_nnets_min_mscrs]],
+    '.')
+```
+
+```{r}
+vehicles_nnets_cms[[vehicles_nnets_min_mscrs]]
+```
+
+Which of the above methods is better?
+
+Answer: We would make the case,
+that a neural network performs better on this data because the misclassification error is lower with just 6 hidden nodes.
+Obviously, one needs to pay attention to the computing time / power.
+Neural networks are getting more expensive in computing with more hidden nodes.
+
+Is there any specific type of vehicle that is harder to classify than the others?
+
+We would say that the saab is difficult to distinguish from the opel.
+And overall, the saab may also be the hardest to classify.
+
+# Problem 2
+
+The ``pendigits`` dataset consists of discretized handwritten digits
+(for a full description, see Section 7.2.10 in the book).
+From this set, extract the subset corresponding to digits 0, 6, 8 and 9,
+and scale the variables so that the variances are 1.
+
+```{r}
+pendigits <- read.csv(file = '../Data_csv/pendigits.csv')
+pendigits$digit <- factor(pendigits$digit)
+pendigits <- pendigits[pendigits$digit %in% c(0, 6, 8, 9),]
+pendigits[, 2:17] <- scale(pendigits[, 2:17])
+pendigits <- transform(pendigits,
+                       color = ifelse(digit == 0, 1,
+                                      ifelse(digit == 6, 2,
+                                             ifelse(digit == 8, 3,
+                                                    ifelse(digit == 9, 4, 0)
+                                             )
+                                      )
+                       )
+)
+```
+
+## (a)
+Compute ordinary principal components and draw a scatterplot of the first two component scores,
+using different colors (or symbols) for different digits.
+Are the digits well separated?
+
+```{r}
+pendigits_pca <- princomp(~. - digit - color, data = pendigits)
+plot(pendigits_pca$scores[, 1] ~ pendigits_pca$scores[, 2], col = pendigits$color, pch = 16)
+legend('topleft', col = 1:4, legend = paste('Number', c(0, 6, 8, 9)), pch = 16, bty = 'n')
+```
+
+## (b)
+Compute kernel principal components using Gaussian kernels with various scales,
+and draw scatterplots of the first two component scores as in (a).
+
+```{r}
+pendigits_kpca <- kpca(~. - digit -color, data = pendigits, kernel = 'rbfdot', kpar = list(sigma = 0.1), features = 2)
+plot(rotated(pendigits_kpca)[, 1], rotated(pendigits_kpca)[, 2], pch = 16, col = as.numeric(pendigits$color))
+legend('bottomleft', col = 1:4, legend = paste('Number', c(0, 6, 8, 9)), pch = 16, bty = 'n')
+```
+
+Are the digits now better separated than in (a)?
+
+Yes, we can see that there is a better separation of the digits now.
